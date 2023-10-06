@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+      target: prod
+    image: reservation_system_backend:${RESERVATION_SYSTEM_BACKEND_VERSION:-latest}
+    restart: always
+    env_file:
+    - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RESERVATION_SYSTEM_BACKEND_HOST: 0.0.0.0
+      RESERVATION_SYSTEM_BACKEND_DB_HOST: reservation_system_backend-db
+      RESERVATION_SYSTEM_BACKEND_DB_PORT: 5432
+      RESERVATION_SYSTEM_BACKEND_DB_USER: reservation_system_backend
+      RESERVATION_SYSTEM_BACKEND_DB_PASS: reservation_system_backend
+      RESERVATION_SYSTEM_BACKEND_DB_BASE: reservation_system_backend
+
+  db:
+    image: postgres:13.8-bullseye
+    hostname: reservation_system_backend-db
+    environment:
+      POSTGRES_PASSWORD: "reservation_system_backend"
+      POSTGRES_USER: "reservation_system_backend"
+      POSTGRES_DB: "reservation_system_backend"
+    volumes:
+    - reservation_system_backend-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U reservation_system_backend
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  migrator:
+    image: reservation_system_backend:${RESERVATION_SYSTEM_BACKEND_VERSION:-latest}
+    restart: "no"
+    command: alembic upgrade head
+    environment:
+      RESERVATION_SYSTEM_BACKEND_DB_HOST: reservation_system_backend-db
+      RESERVATION_SYSTEM_BACKEND_DB_PORT: 5432
+      RESERVATION_SYSTEM_BACKEND_DB_USER: reservation_system_backend
+      RESERVATION_SYSTEM_BACKEND_DB_PASS: reservation_system_backend
+      RESERVATION_SYSTEM_BACKEND_DB_BASE: reservation_system_backend
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+
+volumes:
+  reservation_system_backend-db-data:
+    name: reservation_system_backend-db-data
