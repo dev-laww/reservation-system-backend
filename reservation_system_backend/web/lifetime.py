@@ -1,9 +1,6 @@
 from typing import Awaitable, Callable
 
 from fastapi import FastAPI
-from prisma import Prisma
-
-from reservation_system_backend.settings import settings
 
 
 def register_startup_event(
