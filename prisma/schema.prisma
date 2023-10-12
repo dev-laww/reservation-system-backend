@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+	provider  = "prisma-client-py"
+	interface = "asyncio"
+}
+
+datasource db {
+	provider = "postgres"
+	url      = env("DATABASE_URL")
+}
+
+model User {
+	id            Int            @id @default(autoincrement())
+	property_id   Int?           @unique
+	email         String         @unique
+	first_name    String
+	last_name     String
+	password      String
+	phone_number  String
+	admin         Boolean        @default(false)
+	created_at    DateTime       @default(now())
+	updated_at    DateTime       @updatedAt
+	reviews       Review[]
+	bookings      Booking[]
+	payments      Payment[]
+	notifications Notification[]
+	property      Property?      @relation(fields: [property_id], references: [id])
+
+	@@map("users")
+}
+
+model Property {
+	id               Int       @id @default(autoincrement())
+	current_occupant Int
+	max_occupancy    Int
+	price            Float
+	description      String
+	type             String
+	address          String
+	city             String
+	state            String
+	zip              String
+	bookings         Booking[]
+	reviews          Review[]
+	images           Image[]
+	tenants          User[]
+
+	@@map("properties")
+}
+
+model Image {
+	id          Int      @id @default(autoincrement())
+	property_id Int
+	url         String
+	created_at  DateTime @default(now())
+	updated_at  DateTime @updatedAt
+	property    Property @relation(fields: [property_id], references: [id])
+
+	@@map("images")
+}
+
+model Review {
+	id          Int      @id @default(autoincrement())
+	user_id     Int
+	property_id Int
+	rating      Int
+	comment     String
+	created_at  DateTime @default(now())
+	updated_at  DateTime @updatedAt
+	user        User     @relation(fields: [user_id], references: [id])
+	property    Property @relation(fields: [property_id], references: [id])
+
+	@@map("reviews")
+}
+
+model Booking {
+	id          Int      @id @default(autoincrement())
+	user_id     Int
+	property_id Int
+	start_date  DateTime
+	end_date    DateTime
+	created_at  DateTime @default(now())
+	updated_at  DateTime @updatedAt
+	user        User     @relation(fields: [user_id], references: [id])
+	property    Property @relation(fields: [property_id], references: [id])
+	payment     Payment?
+
+	@@map("bookings")
+}
+
+model Notification {
+	id         Int      @id @default(autoincrement())
+	user_id    Int
+	message    String
+	created_by String
+	created_at DateTime @default(now())
+	updated_at DateTime @updatedAt
+	user       User     @relation(fields: [user_id], references: [id])
+
+	@@map("notifications")
+}
+
+model Payment {
+	id         Int         @id @default(autoincrement())
+	user_id    Int
+	booking_id Int         @unique
+	type       PaymentType @default(cash)
+	amount     Int
+	status     Status      @default(pending)
+	created_at DateTime    @default(now())
+	updated_at DateTime    @updatedAt
+	user       User        @relation(fields: [user_id], references: [id])
+	booking    Booking     @relation(fields: [booking_id], references: [id])
+
+	@@map("payments")
+}
+
+enum PaymentType {
+	cash
+	ewallet
+}
+
+enum Status {
+	pending
+	approved
+	declined
+}
