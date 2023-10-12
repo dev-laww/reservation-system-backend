@@ -39,11 +39,11 @@ class Settings(BaseSettings):
 
     log_level: LogLevel = LogLevel.INFO
     # Variables for the database
-    db_host: str
-    db_port: int
-    db_user: str
-    db_pass: str
-    db_base: str
+    db_host: str = "localhost"
+    db_port: int = 5432
+    db_user: str = "reservation_system_backend"
+    db_pass: str = "reservation_system_backend"
+    db_base: str = "reservation_system_backend"
     db_echo: bool = False
 
     @property

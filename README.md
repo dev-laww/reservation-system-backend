@@ -28,16 +28,19 @@ You can start the project with docker using this command:
 docker-compose -f deploy/docker-compose.yml --project-directory . up --build
 ```
 
-If you want to develop in docker with autoreload add `-f deploy/docker-compose.dev.yml` to your docker command.
+If you want to develop in docker with autoreload add `-f deploy/docker-compose.dev.yml`
+to your docker command.
 Like this:
 
 ```bash
 docker-compose -f deploy/docker-compose.yml -f deploy/docker-compose.dev.yml --project-directory . up --build
 ```
 
-This command exposes the web application on port 8000, mounts current directory and enables autoreload.
+This command exposes the web application on port 8000, mounts current directory and
+enables autoreload.
 
-But you have to rebuild image every time you modify `poetry.lock` or `pyproject.toml` with this command:
+But you have to rebuild image every time you modify `poetry.lock` or `pyproject.toml`
+with this command:
 
 ```bash
 docker-compose -f deploy/docker-compose.yml --project-directory . build
@@ -71,23 +74,28 @@ environment variables here.
 
 All environment variables should start with "RESERVATION_SYSTEM_BACKEND_" prefix.
 
-For example if you see in your "reservation_system_backend/settings.py" a variable named like
+For example if you see in your "reservation_system_backend/settings.py" a variable named
+like
 `random_parameter`, you should provide the "RESERVATION_SYSTEM_BACKEND_RANDOM_PARAMETER"
-variable to configure the value. This behaviour can be changed by overriding `env_prefix` property
+variable to configure the value. This behaviour can be changed by
+overriding `env_prefix` property
 in `reservation_system_backend.settings.Settings.Config`.
 
 An example of .env file:
+
 ```bash
 RESERVATION_SYSTEM_BACKEND_RELOAD="True"
 RESERVATION_SYSTEM_BACKEND_PORT="8000"
 RESERVATION_SYSTEM_BACKEND_ENVIRONMENT="dev"
 ```
 
-You can read more about BaseSettings class here: https://pydantic-docs.helpmanual.io/usage/settings/
+You can read more about BaseSettings class
+here: https://pydantic-docs.helpmanual.io/usage/settings/
 
 ## Pre-commit
 
 To install pre-commit simply run inside the shell:
+
 ```bash
 pre-commit install
 ```
@@ -96,17 +104,18 @@ pre-commit is very useful to check your code before publishing it.
 It's configured using .pre-commit-config.yaml file.
 
 By default it runs:
+
 * black (formats your code);
 * mypy (validates types);
 * isort (sorts imports in all files);
 * flake8 (spots possible bugs);
-
 
 You can read more about pre-commit here: https://pre-commit.com/
 
 ## Migrations
 
 If you want to migrate your database, you should run following commands:
+
 ```bash
 # To run all migrations until the migration with revision_id.
 alembic upgrade "<revision_id>"
@@ -118,6 +127,7 @@ alembic upgrade "head"
 ### Reverting migrations
 
 If you want to revert migrations, you should run:
+
 ```bash
 # revert all migrations up to: revision_id.
 alembic downgrade <revision_id>
@@ -129,6 +139,7 @@ alembic downgrade <revision_id>
 ### Migration generation
 
 To generate migrations you should run:
+
 ```bash
 # For automatic change detection.
 alembic revision --autogenerate
@@ -136,7 +147,6 @@ alembic revision --autogenerate
 # For empty file generation.
 alembic revision
 ```
-
 
 ## Running tests
 
@@ -148,15 +158,17 @@ docker-compose -f deploy/docker-compose.yml -f deploy/docker-compose.dev.yml --p
 ```
 
 For running tests on your local machine.
+
 1. you need to start a database.
 
 I prefer doing it with docker:
+
 ```
 docker run -p "5432:5432" -e "POSTGRES_PASSWORD=reservation_system_backend" -e "POSTGRES_USER=reservation_system_backend" -e "POSTGRES_DB=reservation_system_backend" postgres:13.8-bullseye
 ```
 
-
 2. Run the pytest.
+
 ```bash
 pytest -vv .
 ```

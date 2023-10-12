@@ -13,7 +13,7 @@ async def create_database() -> None:
     async with engine.connect() as conn:
         database_existance = await conn.execute(
             text(
-                f"SELECT 1 FROM pg_database WHERE datname='{settings.db_base}'",  # noqa: E501, S608
+                f"SELECT 1 FROM pg_database WHERE datname='{settings.db_base}'",  # noqa: S608
             ),
         )
         database_exists = database_existance.scalar() == 1

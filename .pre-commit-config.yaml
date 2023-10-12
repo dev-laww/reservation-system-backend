@@ -59,4 +59,4 @@ repos:
         types: [python]
         pass_filenames: false
         args:
-        -   "reservation-system-backend"
+        -   "reservation_system_backend"
