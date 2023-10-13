@@ -39,28 +39,6 @@ class Settings(BaseSettings):
 
     log_level: LogLevel = LogLevel.INFO
     # Variables for the database
-    db_host: str = "localhost"
-    db_port: int = 5432
-    db_user: str = "reservation_system_backend"
-    db_pass: str = "reservation_system_backend"
-    db_base: str = "reservation_system_backend"
-    db_echo: bool = False
-
-    @property
-    def db_url(self) -> URL:
-        """
-        Assemble database URL from settings.
-
-        :return: database URL.
-        """
-        return URL.build(
-            scheme="postgresql+asyncpg",
-            host=self.db_host,
-            port=self.db_port,
-            user=self.db_user,
-            password=self.db_pass,
-            path=f"/{self.db_base}",
-        )
 
     model_config = SettingsConfigDict(
         env_file=".env",

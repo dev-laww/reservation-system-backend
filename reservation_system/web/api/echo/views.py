@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from reservation_system_backend.web.api.echo.schema import Message
+from reservation_system.web.api.echo.schema import Message
 
 router = APIRouter()
 

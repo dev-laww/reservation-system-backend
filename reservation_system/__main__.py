@@ -1,11 +1,11 @@
 import uvicorn
-from settings import settings
+from reservation_system.settings import settings
 
 
 def main() -> None:
     """Entrypoint of the application."""
     uvicorn.run(
-        "reservation_system_backend.web.application:get_app",
+        "reservation_system.web.application:get_app",
         workers=settings.workers_count,
         host=settings.host,
         port=settings.port,

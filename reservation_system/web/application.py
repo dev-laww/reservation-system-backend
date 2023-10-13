@@ -21,7 +21,6 @@ def get_app() -> FastAPI:
     configure_logging()
     app = FastAPI(
         title="reservation_system",
-        version=metadata.version("reservation_system"),
         docs_url="/api/docs",
         redoc_url="/api/redoc",
         openapi_url="/api/openapi.json",
