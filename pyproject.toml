@@ -23,6 +23,8 @@ asyncpg = {version = "^0.28.0", extras = ["sa"]}
 httptools = "^0.6.0"
 loguru = "^0.7.0"
 prisma = "^0.10.0"
+bcrypt = "^4.0.1"
+python-jose = "^3.3.0"
 
 
 [tool.poetry.dev-dependencies]
