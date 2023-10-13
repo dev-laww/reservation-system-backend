@@ -24,7 +24,7 @@ class UserRepository:
         """
         return await self.prisma_client.user.find_unique(where={"email": email})
 
-    async def create(self, email: str, password: str) -> models.User:
+    async def create(self, **data) -> models.User:
         """
         Create user.
 
@@ -32,12 +32,7 @@ class UserRepository:
         :param password: user password.
         :return: User.
         """
-        return await self.prisma_client.user.create(
-            data={
-                "email": email,
-                "password": password,
-            },
-        )
+        return await self.prisma_client.user.create(data=data)
 
     async def update(self, user_id: int, **kwargs) -> models.User:
         """

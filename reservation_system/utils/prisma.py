@@ -13,7 +13,6 @@ def get_db_session() -> Prisma:
     :return: new session.
     """
     if not prisma.is_connected():
-        loop = asyncio.get_running_loop()
-        loop.run_until_complete(prisma.connect())
+        asyncio.create_task(prisma.connect())
 
     return prisma
