@@ -26,7 +26,7 @@ model User {
   bookings      Booking[]
   payments      Payment[]
   notifications Notification[]
-  property      Property?      @relation(fields: [property_id], references: [id])
+  property      Property?      @relation(fields: [property_id], references: [id], onDelete: SetNull)
 
   @@map("users")
 }
@@ -36,6 +36,7 @@ model Property {
   current_occupant Int
   max_occupancy    Int
   price            Float
+  name             String
   description      String
   type             String
   address          String
@@ -56,7 +57,7 @@ model Image {
   url         String
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  property    Property @relation(fields: [property_id], references: [id])
+  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
 
   @@map("images")
 }
@@ -69,22 +70,23 @@ model Review {
   comment     String
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  user        User     @relation(fields: [user_id], references: [id])
-  property    Property @relation(fields: [property_id], references: [id])
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
 
   @@map("reviews")
 }
 
 model Booking {
-  id          Int      @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   user_id     Int
   property_id Int
   start_date  DateTime
   end_date    DateTime
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  user        User     @relation(fields: [user_id], references: [id])
-  property    Property @relation(fields: [property_id], references: [id])
+  status      BookingStatus @default(pending)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  user        User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  property    Property      @relation(fields: [property_id], references: [id], onDelete: Cascade)
   payment     Payment?
 
   @@map("bookings")
@@ -94,10 +96,11 @@ model Notification {
   id         Int      @id @default(autoincrement())
   user_id    Int
   message    String
+  seen       Boolean  @default(false)
   created_by String
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  user       User     @relation(fields: [user_id], references: [id])
+  seen_at    DateTime @updatedAt
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }
@@ -111,8 +114,8 @@ model Payment {
   status     Status      @default(pending)
   created_at DateTime    @default(now())
   updated_at DateTime    @updatedAt
-  user       User        @relation(fields: [user_id], references: [id])
-  booking    Booking     @relation(fields: [booking_id], references: [id])
+  user       User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  booking    Booking     @relation(fields: [booking_id], references: [id], onDelete: Cascade)
 
   @@map("payments")
 }
@@ -122,8 +125,15 @@ enum PaymentType {
   ewallet
 }
 
-enum Status {
+enum BookingStatus {
   pending
   approved
+  declined
+  canceled
+}
+
+enum Status {
+  pending
+  paid
   declined
 }
