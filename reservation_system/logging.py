@@ -3,8 +3,7 @@ import sys
 from typing import Union
 
 from loguru import logger
-
-from reservation_system_backend.settings import settings
+from settings import settings
 
 
 class InterceptHandler(logging.Handler):

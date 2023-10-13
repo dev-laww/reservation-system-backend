@@ -2,10 +2,9 @@ from importlib import metadata
 
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
-
-from reservation_system_backend.logging import configure_logging
-from reservation_system_backend.web.api.router import api_router
-from reservation_system_backend.web.lifetime import (
+from reservation_system.logging import configure_logging
+from reservation_system.web.api.router import api_router
+from reservation_system.web.lifetime import (
     register_shutdown_event,
     register_startup_event,
 )
@@ -21,8 +20,8 @@ def get_app() -> FastAPI:
     """
     configure_logging()
     app = FastAPI(
-        title="reservation_system_backend",
-        version=metadata.version("reservation_system_backend"),
+        title="reservation_system",
+        version=metadata.version("reservation_system"),
         docs_url="/api/docs",
         redoc_url="/api/redoc",
         openapi_url="/api/openapi.json",

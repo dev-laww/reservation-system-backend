@@ -1,5 +1,4 @@
 from fastapi.routing import APIRouter
-
 from reservation_system_backend.web.api import echo, monitoring
 
 api_router = APIRouter()

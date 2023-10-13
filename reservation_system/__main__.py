@@ -1,6 +1,5 @@
 import uvicorn
-
-from reservation_system_backend.settings import settings
+from settings import settings
 
 
 def main() -> None:
