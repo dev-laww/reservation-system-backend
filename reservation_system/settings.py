@@ -3,7 +3,6 @@ from pathlib import Path
 from tempfile import gettempdir
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from yarl import URL
 
 TEMP_DIR = Path(gettempdir())
 
@@ -38,7 +37,9 @@ class Settings(BaseSettings):
     environment: str = "dev"
 
     log_level: LogLevel = LogLevel.INFO
-    # Variables for the database
+
+    # JWT settings
+    jwt_secret: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
