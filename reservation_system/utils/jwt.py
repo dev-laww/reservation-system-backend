@@ -54,12 +54,12 @@ class TokenBearer(HTTPBearer):
         credentials = await super().__call__(request)
 
         if not credentials or not credentials.scheme == "Bearer":
-            raise Error.unauthorized
+            raise Error.UNAUTHORIZED
 
         jwt = self.verify_jwt(credentials.credentials)
 
         if not await user_repo.get_by_id(jwt.id):
-            raise Error.unauthorized
+            raise Error.UNAUTHORIZED
 
         return jwt
 
@@ -73,7 +73,7 @@ class AdminTokenBearer(TokenBearer):
         jwt = super().verify_jwt(token)
 
         if not jwt.is_admin:
-            raise Error.forbidden
+            raise Error.FORBIDDEN
         return jwt
 
 

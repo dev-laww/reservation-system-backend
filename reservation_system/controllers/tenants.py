@@ -9,7 +9,7 @@ class TenantController:
     repo = UserRepository()
     notif_repo = NotificationRepository()
 
-    async def get_by_id(self, tenant_id: int):
+    async def get_tenant(self, tenant_id: int):
         """
         Get tenant by id.
 
@@ -19,14 +19,14 @@ class TenantController:
         tenant = await self.repo.get_tenant(user_id=tenant_id)
 
         if not tenant:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Tenant retrieved",
             data=Tenant(**tenant.model_dump()).model_dump()
         )
 
-    async def get_all(self):
+    async def get_tenants(self):
         """
         Get all tenants.
 
@@ -52,7 +52,7 @@ class TenantController:
         tenant = await self.repo.get_tenant(user_id=tenant_id)
 
         if not tenant:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         notification = await self.notif_repo.create(
             user_id=tenant_id,

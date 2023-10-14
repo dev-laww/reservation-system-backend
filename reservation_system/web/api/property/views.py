@@ -21,7 +21,7 @@ async def get_property(property_id: int):
 
 @router.post("", dependencies=[Depends(ADMIN_AUTH)])
 async def create_property(data: PropertyCreate):
-    return await controller.create(data=data)
+    return await controller.create_property(data=data)
 
 
 @router.put("/{property_id}", dependencies=[Depends(ADMIN_AUTH)])

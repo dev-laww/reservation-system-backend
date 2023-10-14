@@ -20,7 +20,7 @@ class PropertyController:
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         property_data = {**property.model_dump(), "current_occupant": len(property.tenants)}
         print(property_data)
@@ -48,7 +48,7 @@ class PropertyController:
             ]
         )
 
-    async def create(self, data: PropertyCreate):
+    async def create_property(self, data: PropertyCreate):
         """
         Create property.
 
@@ -76,7 +76,7 @@ class PropertyController:
         property = await self.repo.update(property_id=property_id, **parsed)
 
         if not property:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Property updated",
@@ -94,7 +94,7 @@ class PropertyController:
         property = await self.repo.delete(property_id=property_id)
 
         if not property:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Property deleted",
@@ -129,7 +129,7 @@ class PropertyController:
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         review = await self.repo.create_review(property_id, user_id=user_id, **data.model_dump())
 
@@ -151,12 +151,12 @@ class PropertyController:
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         review = await self.repo.update_review(review_id=review_id, **data.model_dump())
 
         if not review or user_id != review.user_id:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Property review updated",
@@ -176,12 +176,12 @@ class PropertyController:
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         review = await self.repo.get_review(review_id=review_id)
 
         if not review or user_id != review.user_id:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Property review deleted",
@@ -199,7 +199,7 @@ class PropertyController:
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         bookings = await self.repo.get_bookings(property_id=property_id)
 
@@ -219,7 +219,7 @@ class PropertyController:
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         if property.current_occupant >= property.max_occupancy:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Property is full")
@@ -247,7 +247,7 @@ class PropertyController:
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         tenants = await self.repo.get_tenants(property_id=property_id)
 
@@ -268,7 +268,7 @@ class PropertyController:
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         tenant_check = await self.repo.get_tenant(user_id=user_id)
 
@@ -278,7 +278,7 @@ class PropertyController:
         tenant = await self.repo.add_tenant(property_id=property_id, user_id=user_id)
 
         if not tenant:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         await self.repo.increment_occupants(property_id=property_id)
 
@@ -299,12 +299,12 @@ class PropertyController:
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         tenant_check = await self.repo.get_tenant(user_id=tenant_id)
 
         if not tenant_check or (tenant_check and tenant_check.property_id != property_id):
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         await self.repo.remove_tenant(property_id=property_id, user_id=tenant_id)
         await self.repo.decrement_occupants(property_id=property_id)

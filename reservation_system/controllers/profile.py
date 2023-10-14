@@ -20,11 +20,11 @@ class ProfileController:
         user = await self.repo.get_by_id(user_id=user_id)
 
         if not user:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Profile retrieved",
-            data=Profile(**user.model_dump(exclude=("password",))).model_dump()
+            data=Profile(**user.model_dump()).model_dump()
         )
 
     async def update_profile(self, user_id: int, data: UpdateProfile):
@@ -38,11 +38,11 @@ class ProfileController:
         user = await self.repo.update(user_id=user_id, **{k: v for k, v in data.model_dump().items() if v})
 
         if not user:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Profile updated",
-            data=Profile(**user.model_dump(exclude=("password",))).model_dump()
+            data=Profile(**user.model_dump()).model_dump()
         )
 
     async def change_password(self, user_id: int, data: ChangePassword):
@@ -54,6 +54,9 @@ class ProfileController:
 
         user = await self.repo.get_by_id(user_id=user_id)
 
+        if not user:
+            raise Error.NOT_FOUND
+
         if not check_password(data.old_password, user.password):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password")
 
@@ -62,14 +65,11 @@ class ProfileController:
 
         password = hash_password(data.new_password)
 
-        user = await self.repo.update(user_id=user_id, password=password)
-
-        if not user:
-            raise Error.not_found
+        user_updated = await self.repo.update(user_id=user_id, password=password)
 
         return SuccessResponse(
             message="Password updated",
-            data=Profile(**user.model_dump()).model_dump()
+            data=Profile(**user_updated.model_dump()).model_dump()
         )
 
     async def get_notifications(self, user_id: int):
@@ -97,7 +97,7 @@ class ProfileController:
         notification = await self.repo.read_notification(user_id=user_id, notification_id=notification_id)
 
         if not notification:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Notification marked as read",
@@ -144,7 +144,7 @@ class ProfileController:
         booking = await self.repo.get_booking(user_id=user_id, booking_id=booking_id)
 
         if not booking:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Booking retrieved",
@@ -163,7 +163,7 @@ class ProfileController:
         booking = await self.repo.cancel_booking(user_id=user_id, booking_id=booking_id)
 
         if not booking:
-            raise Error.not_found
+            raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Booking cancelled",
