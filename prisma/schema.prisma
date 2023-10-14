@@ -33,7 +33,7 @@ model User {
 
 model Property {
   id               Int       @id @default(autoincrement())
-  current_occupant Int
+  current_occupant Int       @default(0)
   max_occupancy    Int
   price            Float
   name             String
@@ -43,6 +43,8 @@ model Property {
   city             String
   state            String
   zip              String
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
   bookings         Booking[]
   reviews          Review[]
   images           Image[]
