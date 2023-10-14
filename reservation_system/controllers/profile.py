@@ -1,4 +1,4 @@
-from reservation_system.web.api.profile import schema
+from reservation_system.schemas import profile as schema
 from reservation_system.repositories.user import UserRepository
 from reservation_system.utils.responses import SuccessResponse, Error
 
