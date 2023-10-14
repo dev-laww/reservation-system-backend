@@ -22,7 +22,7 @@ class UserRepository:
         :param email: user email.
         :return: User.
         """
-        return await self.prisma_client.user.find_unique(where={"email": email})
+        return await self.prisma_client.user.find_first(where={"email": email})
 
     async def create(self, **data) -> models.User:
         """

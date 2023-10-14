@@ -10,9 +10,20 @@ class RegisterUser(CamelBaseModel):
     password_confirmation: str
 
 
-class User(CamelBaseModel):
+class LoginUser(CamelBaseModel):
+    email: str
+    password: str
+
+
+class AuthResponse(CamelBaseModel):
+    status: str
+    message: str
     id: int
     first_name: str
     last_name: str
     email: str
-    phone_number: str
+
+
+class Token(AuthResponse):
+    access_token: str
+    refresh_token: str
