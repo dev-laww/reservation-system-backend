@@ -17,7 +17,12 @@ async def get_profile(user: JWTData = Depends(AUTH)):
 
 @router.put("")
 async def update_profile(data: schema.UpdateProfile, user: JWTData = Depends(AUTH)):
-    return await controller.update_profile(user_id=user.id, **{k: v for k, v in data.model_dump().items() if v})
+    return await controller.update_profile(user_id=user.id, data=data)
+
+
+@router.put("/change-password")
+async def change_password(data: schema.ChangePassword, user: JWTData = Depends(AUTH)):
+    return await controller.change_password(user_id=user.id, data=data)
 
 
 @router.get("/notifications")
@@ -27,7 +32,7 @@ async def get_notifications(user: JWTData = Depends(AUTH)):
 
 @router.put("/notifications/{notification_id}")
 async def mark_notification_as_read(notification_id: int, user: JWTData = Depends(AUTH)):
-    return await controller.mark_read(notification_id, user_id=user.id)
+    return await controller.mark_read(notification_id=notification_id, user_id=user.id)
 
 
 @router.put("/notifications")

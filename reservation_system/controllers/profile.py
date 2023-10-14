@@ -1,6 +1,10 @@
-from reservation_system.schemas import profile as schema
+from fastapi import HTTPException, status
+
+from reservation_system.schemas.profile import Profile
+from reservation_system.web.api.profile.schema import UpdateProfile, ChangePassword
 from reservation_system.repositories.user import UserRepository
 from reservation_system.utils.responses import SuccessResponse, Error
+from reservation_system.utils.hashing import check_password, hash_password
 
 
 class ProfileController:
@@ -20,10 +24,10 @@ class ProfileController:
 
         return SuccessResponse(
             message="Profile retrieved",
-            data=schema.Profile(**user.model_dump(exclude=("password",))).model_dump()
+            data=Profile(**user.model_dump(exclude=("password",))).model_dump()
         )
 
-    async def update_profile(self, user_id: int, **data):
+    async def update_profile(self, user_id: int, data: UpdateProfile):
         """
         Update user profile.
 
@@ -31,23 +35,42 @@ class ProfileController:
         :param kwargs: user data.
         :return: User profile.
         """
-        user = await self.repo.update(user_id=user_id, **data)
+        user = await self.repo.update(user_id=user_id, **{k: v for k, v in data.model_dump().items() if v})
 
         if not user:
             raise Error.not_found
 
         return SuccessResponse(
             message="Profile updated",
-            data=schema.Profile(**user.model_dump(exclude=("password",))).model_dump()
+            data=Profile(**user.model_dump(exclude=("password",))).model_dump()
         )
 
-    async def change_password(self):
+    async def change_password(self, user_id: int, data: ChangePassword):
         """
         Change user password.
 
         :return: User profile.
         """
-        pass
+
+        user = await self.repo.get_by_id(user_id=user_id)
+
+        if not check_password(data.old_password, user.password):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password")
+
+        if data.new_password != data.confirm_password:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match")
+
+        password = hash_password(data.new_password)
+
+        user = await self.repo.update(user_id=user_id, password=password)
+
+        if not user:
+            raise Error.not_found
+
+        return SuccessResponse(
+            message="Password updated",
+            data=Profile(**user.model_dump()).model_dump()
+        )
 
     async def get_notifications(self, user_id: int):
         """
@@ -63,7 +86,7 @@ class ProfileController:
             data=[notification.model_dump() for notification in notifications]
         )
 
-    async def mark_read(self, notification_id: int):
+    async def mark_read(self, user_id: int, notification_id: int):
         """
         Mark notification as read.
 
@@ -71,7 +94,7 @@ class ProfileController:
         :return: User notifications.
         """
 
-        notification = await self.repo.read_notification(notification_id=notification_id)
+        notification = await self.repo.read_notification(user_id=user_id, notification_id=notification_id)
 
         if not notification:
             raise Error.not_found
@@ -121,7 +144,7 @@ class ProfileController:
         booking = await self.repo.get_booking(user_id=user_id, booking_id=booking_id)
 
         if not booking:
-            Error.not_found
+            raise Error.not_found
 
         return SuccessResponse(
             message="Booking retrieved",
@@ -146,5 +169,3 @@ class ProfileController:
             message="Booking cancelled",
             data=booking.model_dump()
         )
-
-    
