@@ -1,6 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-
-from reservation_system.utils.alias import to_camel
+from pydantic.alias_generators import to_camel
 
 
 class CamelBaseModel(BaseModel):
