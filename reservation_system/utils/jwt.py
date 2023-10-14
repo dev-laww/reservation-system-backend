@@ -7,6 +7,7 @@ from fastapi.security import HTTPBearer
 from reservation_system.settings import settings
 from reservation_system.utils.responses import Error
 from reservation_system.schemas.token import JWTData
+from reservation_system.repositories.user import UserRepository
 
 
 def encode_token(data: dict, expire_days: int = 1) -> str:
@@ -42,6 +43,9 @@ def decode_token(token: str) -> dict:
     return decoded
 
 
+user_repo = UserRepository()
+
+
 class TokenBearer(HTTPBearer):
     def __init__(self):
         super().__init__(auto_error=False)
@@ -52,7 +56,13 @@ class TokenBearer(HTTPBearer):
         if not credentials or not credentials.scheme == "Bearer":
             raise Error.unauthorized
 
-        return self.verify_jwt(credentials.credentials)
+        jwt = self.verify_jwt(credentials.credentials)
+
+        if not await user_repo.get_by_id(jwt.id):
+            raise Error.unauthorized
+
+        return jwt
+
 
     def verify_jwt(self, token: str):
         return JWTData(**decode_token(token))
@@ -60,7 +70,11 @@ class TokenBearer(HTTPBearer):
 
 class AdminTokenBearer(TokenBearer):
     def verify_jwt(self, token: str):
-        return super().verify_jwt(token).is_admin
+        jwt = super().verify_jwt(token)
+
+        if not jwt.is_admin:
+            raise Error.forbidden
+        return jwt
 
 
 AUTH = TokenBearer()  # authorization dependency

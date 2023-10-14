@@ -13,7 +13,14 @@ class PropertyRepository:
         :param property_id: property id.
         :return: Property.
         """
-        return await self.prisma_client.property.find_unique(where={"id": property_id})
+        return await self.prisma_client.property.find_unique(
+            where={"id": property_id},
+            include={
+                "images": True,
+                "reviews": True,
+                "tenants": True
+            }
+        )
 
     async def get_by_name(self, name: str) -> models.Property:
         """
@@ -22,7 +29,14 @@ class PropertyRepository:
         :param name: property name.
         :return: Property.
         """
-        return await self.prisma_client.property.find_unique(where={"name": name})
+        return await self.prisma_client.property.find_unique(
+            where={"name": name},
+            include={
+                "images": True,
+                "reviews": True,
+                "tenants": True,
+            }
+        )
 
     async def get_all(self) -> list[models.Property]:
         """
@@ -30,7 +44,13 @@ class PropertyRepository:
 
         :return: list of properties.
         """
-        return await self.prisma_client.property.find_many()
+        return await self.prisma_client.property.find_many(
+            include={
+                "images": True,
+                "reviews": True,
+                "tenants": True,
+            }
+        )
 
     async def create(self, **data) -> models.Property:
         """
@@ -39,7 +59,14 @@ class PropertyRepository:
         :param data: property data.
         :return: Property.
         """
-        return await self.prisma_client.property.create(data=data)
+        return await self.prisma_client.property.create(
+            data=data,
+            include={
+                "images": True,
+                "reviews": True,
+                "tenants": True,
+            }
+        )
 
     async def update(self, property_id: int, **kwargs) -> models.Property:
         """
@@ -52,6 +79,11 @@ class PropertyRepository:
         return await self.prisma_client.property.update(
             where={"id": property_id},
             data=kwargs,
+            include={
+                "images": True,
+                "reviews": True,
+                "tenants": True,
+            }
         )
 
     async def delete(self, property_id: int) -> models.Property:
@@ -61,7 +93,14 @@ class PropertyRepository:
         :param property_id: property id.
         :return: Property.
         """
-        return await self.prisma_client.property.delete(where={"id": property_id})
+        return await self.prisma_client.property.delete(
+            where={"id": property_id},
+            include={
+                "images": True,
+                "reviews": True,
+                "tenants": True,
+            }
+        )
 
     async def add_image(self, property_id: int, url: str) -> models.Property:
         """
@@ -91,6 +130,15 @@ class PropertyRepository:
         """
         return await self.prisma_client.review.find_many(where={"property_id": property_id})
 
+    async def get_review(self, review_id: int) -> models.Review:
+        """
+        Get property review.
+
+        :param review_id: review id.
+        :return: Review.
+        """
+        return await self.prisma_client.review.find_first(where={"id": review_id})
+
     async def create_review(self, property_id: int, **data) -> models.Review:
         """
         Create a property review.
@@ -106,16 +154,16 @@ class PropertyRepository:
             },
         )
 
-    async def update_review(self, property_id: int, **data) -> models.Review:
+    async def update_review(self, review_id: int, **data) -> models.Review:
         """
         Update a property review.
 
-        :param property_id: property id.
+        :param review_id: property id.
         :param data: review data.
         :returns: Review.
         """
         return await self.prisma_client.review.update(
-            where={"property_id": property_id},
+            where={"id": review_id},
             data=data,
         )
 
@@ -152,6 +200,19 @@ class PropertyRepository:
             },
         )
 
+    async def get_booking(self, property_id: int, user_id: int) -> models.Booking:
+        """
+        Get property booking.
+
+        :param property_id: property id.
+        :param user_id: user id.
+        :return: Booking.
+        """
+
+        return await self.prisma_client.booking.find_first(
+            where={"property_id": property_id, "user_id": user_id}
+        )
+
     async def get_tenants(self, property_id: int) -> list[models.User]:
         """
         Get property tenants.
@@ -182,7 +243,16 @@ class PropertyRepository:
         :param user_id: user id.
         :return: User.
         """
-        return await self.prisma_client.user.update(
-            where={"id": user_id},
-            data={"property_id": None},
+        return await self.prisma_client.property.update(
+            where={"id": property_id},
+            data={"tenants": {"disconnect": {"id": user_id}}},
         )
+
+    async def get_tenant(self, user_id: int) -> models.User:
+        """
+        Get tenant.
+
+        :param user_id: user id.
+        :return: User.
+        """
+        return await self.prisma_client.user.find_first(where={"id": user_id})
