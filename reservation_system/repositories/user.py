@@ -1,4 +1,4 @@
-from prisma import models
+from prisma import models, enums
 
 from reservation_system.utils.prisma import get_db_session
 
@@ -13,7 +13,7 @@ class UserRepository:
         :param user_id: user id.
         :return: User.
         """
-        return await self.prisma_client.user.find_unique(where={"id": user_id})
+        return await self.prisma_client.user.find_first(where={"id": user_id})
 
     async def get_by_email(self, email: str) -> models.User:
         """
@@ -34,17 +34,18 @@ class UserRepository:
         """
         return await self.prisma_client.user.create(data=data)
 
-    async def update(self, user_id: int, **kwargs) -> models.User:
+    async def update(self, user_id: int, **data) -> models.User:
         """
         Update user.
 
         :param user_id: user id.
-        :param kwargs: user data.
+        :param data: user data.
         :return: User.
         """
+
         return await self.prisma_client.user.update(
             where={"id": user_id},
-            data=kwargs,
+            data=data,
         )
 
     async def delete(self, user_id: int) -> models.User:
@@ -92,12 +93,20 @@ class UserRepository:
         :param booking_id: booking id.
         :return: Booking.
         """
+        if not await self.prisma_client.booking.find_first(
+            where={
+                "id": booking_id,
+                "user_id": user_id,
+            }
+        ):
+            return
+
         return await self.prisma_client.booking.update(
             where={
                 "id": booking_id,
                 "user_id": user_id,
             },
-            data={"status": "CANCELLED"},
+            data={"status": enums.BookingStatus.canceled},
         )
 
     async def get_payments(self, user_id: int) -> list[models.Payment]:
@@ -109,7 +118,7 @@ class UserRepository:
         """
         return await self.prisma_client.payment.find_many(where={"user_id": user_id})
 
-    async def get_notificaitions(self, user_id: int) -> list[models.Notification]:
+    async def get_notifications(self, user_id: int) -> list[models.Notification]:
         """
         Get user notifications.
 
