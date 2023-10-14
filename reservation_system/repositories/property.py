@@ -86,6 +86,48 @@ class PropertyRepository:
             }
         )
 
+    async def increment_occupants(self, property_id: int):
+        """
+        Increment property occupants.
+
+        :param property_id: property id.
+        :return: Property.
+        """
+        return await self.prisma_client.property.update(
+            where={"id": property_id},
+            data={
+                "current_occupant": {
+                    "increment": 1
+                }
+            },
+            include={
+                "images": True,
+                "reviews": True,
+                "tenants": True,
+            }
+        )
+
+    async def decrement_occupants(self, property_id: int):
+        """
+        Decrement property occupants.
+
+        :param property_id: property id.
+        :return: Property.
+        """
+        return await self.prisma_client.property.update(
+            where={"id": property_id},
+            data={
+                "current_occupant": {
+                    "decrement": 1
+                }
+            },
+            include={
+                "images": True,
+                "reviews": True,
+                "tenants": True,
+            }
+        )
+
     async def delete(self, property_id: int) -> models.Property:
         """
         Delete property.

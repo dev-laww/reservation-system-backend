@@ -46,7 +46,6 @@ class PropertyController:
                 ).model_dump()
                 for property in properties
             ]
-            
         )
 
     async def create(self, data: PropertyCreate):
@@ -58,13 +57,11 @@ class PropertyController:
         """
 
         property = await self.repo.create(**data.model_dump())
-        property_data = {**property.model_dump(), "current_occupant": len(property.tenants)}
 
         return SuccessResponse(
             message="Property created",
-            data=Property(**property_data).model_dump()
+            data=Property(**property.model_dump()).model_dump()
         )
-
 
     async def update_property(self, property_id: int, data: PropertyUpdate):
         """
@@ -81,11 +78,9 @@ class PropertyController:
         if not property:
             raise Error.not_found
 
-        property_data = {**property.model_dump(), "current_occupant": len(property.tenants)}
-
         return SuccessResponse(
             message="Property updated",
-            data=Property(**property_data).model_dump()
+            data=Property(**property.model_dump()).model_dump()
         )
 
     async def delete_property(self, property_id: int):
@@ -101,11 +96,9 @@ class PropertyController:
         if not property:
             raise Error.not_found
 
-        property_data = {**property.model_dump(), "current_occupant": len(property.tenants)}
-
         return SuccessResponse(
             message="Property deleted",
-            data=Property(**property_data).model_dump()
+            data=Property(**property.model_dump()).model_dump()
         )
 
     async def get_reviews(self, property_id: int):
@@ -277,10 +270,17 @@ class PropertyController:
         if not property:
             raise Error.not_found
 
+        tenant_check = await self.repo.get_tenant(user_id=user_id)
+
+        if tenant_check.property_id == property_id:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User is already a tenant")
+
         tenant = await self.repo.add_tenant(property_id=property_id, user_id=user_id)
 
         if not tenant:
             raise Error.not_found
+
+        await self.repo.increment_occupants(property_id=property_id)
 
         return SuccessResponse(
             message="Tenant added",
@@ -307,6 +307,7 @@ class PropertyController:
             raise Error.not_found
 
         await self.repo.remove_tenant(property_id=property_id, user_id=tenant_id)
+        await self.repo.decrement_occupants(property_id=property_id)
 
         return SuccessResponse(
             message="Tenant removed",
