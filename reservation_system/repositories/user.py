@@ -177,23 +177,17 @@ class UserRepository:
         :return: list of tenants.
         """
         return await self.prisma_client.user.find_many(
-            where={"property": {"is_not": None}},
-            include={"property": True},
+            where={"property_id": {"not": None}},
         )
 
-    async def get_tenant(self, user_id: int) -> models.User:
+    async def get_tenant(self, user_id: int) -> models.User | None:
         """
         Get tenant.
 
         :param user_id: user id.
         :return: Tenant.
         """
-        return await self.prisma_client.user.find_first(
-            where={
-                "id": user_id,
-                "property": {"is_not": None},
-            },
-            include={
-                "property": True,
-            },
-        )
+        tenant = await self.prisma_client.user.find_first(where={"id": user_id})
+
+        if not tenant or not tenant.property_id:
+            return

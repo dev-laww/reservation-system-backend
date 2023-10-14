@@ -52,10 +52,16 @@ class TokenBearer(HTTPBearer):
         if not credentials or not credentials.scheme == "Bearer":
             raise Error.unauthorized
 
-        return self._verify_jwt(credentials.credentials)
+        return self.verify_jwt(credentials.credentials)
 
-    def _verify_jwt(self, token: str):
+    def verify_jwt(self, token: str):
         return JWTData(**decode_token(token))
 
 
+class AdminTokenBearer(TokenBearer):
+    def verify_jwt(self, token: str):
+        return super().verify_jwt(token).is_admin
+
+
 AUTH = TokenBearer()  # authorization dependency
+ADMIN_AUTH = AdminTokenBearer()  # admin authorization dependency
