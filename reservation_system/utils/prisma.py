@@ -4,6 +4,7 @@ from prisma import Prisma
 
 
 prisma = Prisma()
+asyncio.create_task(prisma.connect())
 
 
 def get_db_session() -> Prisma:
@@ -12,7 +13,4 @@ def get_db_session() -> Prisma:
 
     :return: new session.
     """
-    if not prisma.is_connected():
-        asyncio.create_task(prisma.connect())
-
     return prisma
