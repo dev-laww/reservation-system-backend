@@ -1,6 +1,5 @@
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
 from reservation_system.settings import settings
-
 
 mail_config = ConnectionConfig(
     MAIL_USERNAME=settings.mail_username,

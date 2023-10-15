@@ -9,7 +9,13 @@ from reservation_system.utils.hashing import check_password, hash_password
 from reservation_system.utils.jwt import encode_token
 from reservation_system.utils.mail import send_email
 from reservation_system.utils.responses import Error, SuccessResponse
-from reservation_system.web.api.auth.schema import AuthResponse, RegisterUser, Token, PasswordReset, ForgotPassowrd
+from reservation_system.web.api.auth.schema import (
+    AuthResponse,
+    ForgotPassowrd,
+    PasswordReset,
+    RegisterUser,
+    Token,
+)
 
 
 class AuthController:
@@ -48,7 +54,7 @@ class AuthController:
         await self.repo.create_refresh_token(
             user_id=result.id,
             token=refresh_token,
-            expires_at=datetime.now() + timedelta(days=30)
+            expires_at=datetime.now() + timedelta(days=30),
         )
         return AuthResponse(
             status="success",
@@ -94,7 +100,7 @@ class AuthController:
         await self.repo.create_refresh_token(
             user_id=user.id,
             token=refresh_token,
-            expires_at=datetime.now() + timedelta(days=30)
+            expires_at=datetime.now() + timedelta(days=30),
         )
 
         return Token(
@@ -106,7 +112,7 @@ class AuthController:
     async def refresh_token(self, user_id: int, refresh_token: str):
         """
         Refresh an access token.
-        
+
         :param refresh_token: refresh token.
         :return: new access token.
         """
@@ -132,7 +138,7 @@ class AuthController:
     async def forgot_password(self, data: ForgotPassowrd):
         """
         Forgot password.
-        
+
         :param email: email.
         """
 
@@ -163,7 +169,7 @@ class AuthController:
     async def reset_password(self, data: PasswordReset):
         """
         Reset password.
-        
+
         :param code: code.
         :param password: password.
         """

@@ -98,7 +98,7 @@ class ProfileController:
         """
 
         notification = await self.repo.read_notification(
-            user_id=user_id, notification_id=notification_id
+            notification_id=notification_id
         )
 
         if not notification:

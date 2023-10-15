@@ -42,13 +42,13 @@ class PropertyRepository:
         """
 
         order = None
-        where = None
+        where = {}
 
         if filters.sort and filters.order:
             order = {filters.sort: filters.order}
 
         if filters.min_price or filters.max_price or filters.price:
-            where = {"price": {}}
+            where["price"] = {}
 
             if filters.min_price:
                 where["price"]["gte"] = filters.min_price
@@ -60,7 +60,7 @@ class PropertyRepository:
                 where["price"] = filters.price
 
         if filters.min_occupancy or filters.max_occupancy or filters.occupancy:
-            where = {"max_occupancy": {}}
+            where["max_occupancy"] = {}
 
             if filters.min_occupancy:
                 where["max_occupancy"]["gte"] = filters.min_occupancy
@@ -70,6 +70,9 @@ class PropertyRepository:
 
             if filters.occupancy:
                 where["max_occupancy"] = filters.occupancy
+
+        if len(where) > 1:
+            where = {"AND": [{k: v} for k, v in where.items()]}
 
         if filters.sort and filters.order:
             if filters.sort in (
@@ -83,7 +86,7 @@ class PropertyRepository:
         return await self.prisma_client.property.find_many(
             take=filters.limit,
             skip=filters.offset,
-            where=where,
+            where=where or None,
             order=order,
             include={
                 "images": True,
@@ -290,7 +293,16 @@ class PropertyRepository:
         """
 
         return await self.prisma_client.booking.find_first(
-            where={"property_id": property_id, "user_id": user_id}
+            where={
+                "AND": [
+                    {
+                        "property_id": property_id,
+                    },
+                    {
+                        "user_id": user_id,
+                    },
+                ]
+            }
         )
 
     async def get_tenants(self, property_id: int) -> list[models.User]:
