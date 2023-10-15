@@ -1,6 +1,6 @@
 from prisma import models, enums
 
-from reservation_system.utils.prisma import get_db_session
+from ..utils.prisma import get_db_session
 
 
 class UserRepository:
