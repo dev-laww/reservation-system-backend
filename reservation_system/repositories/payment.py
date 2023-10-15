@@ -54,7 +54,6 @@ class PaymentRepository:
         """
         return await self.prisma_client.payment.delete(where={"id": payment_id})
 
-
     async def mark_paid(self, payment_id: int) -> models.Payment:
         """
         Mark payment as paid.

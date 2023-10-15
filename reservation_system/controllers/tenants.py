@@ -22,8 +22,7 @@ class TenantController:
             raise Error.NOT_FOUND
 
         return SuccessResponse(
-            message="Tenant retrieved",
-            data=Tenant(**tenant.model_dump()).model_dump()
+            message="Tenant retrieved", data=Tenant(**tenant.model_dump()).model_dump()
         )
 
     async def get_tenants(self):
@@ -37,7 +36,7 @@ class TenantController:
 
         return SuccessResponse(
             message="Tenants retrieved",
-            data=[Tenant(**tenant.model_dump()).model_dump() for tenant in tenants]
+            data=[Tenant(**tenant.model_dump()).model_dump() for tenant in tenants],
         )
 
     async def notify_tenant(self, tenant_id: int, message: str):
@@ -62,5 +61,5 @@ class TenantController:
 
         return SuccessResponse(
             message="Tenant notified",
-            data=Notification(**notification.model_dump()).model_dump()
+            data=Notification(**notification.model_dump()).model_dump(),
         )

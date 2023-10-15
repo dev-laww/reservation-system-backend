@@ -13,9 +13,13 @@ class NotificationRepository:
         :param notification_id: notification id.
         :return: Notification.
         """
-        return await self.prisma_client.notification.find_unique(where={"id": notification_id})
+        return await self.prisma_client.notification.find_unique(
+            where={"id": notification_id}
+        )
 
-    async def create(self, user_id: int, message: str, created_by: str) -> models.Notification:
+    async def create(
+        self, user_id: int, message: str, created_by: str
+    ) -> models.Notification:
         """
         Create notification.
 
@@ -52,4 +56,6 @@ class NotificationRepository:
         :param notification_id: notification id.
         :return: Notification.
         """
-        return await self.prisma_client.notification.delete(where={"id": notification_id})
+        return await self.prisma_client.notification.delete(
+            where={"id": notification_id}
+        )
