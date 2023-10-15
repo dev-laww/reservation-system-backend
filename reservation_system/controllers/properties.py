@@ -1,10 +1,16 @@
 from fastapi import HTTPException, status
 
-from reservation_system.repositories.property import PropertyRepository
-from reservation_system.utils.responses import SuccessResponse, Error
-from reservation_system.schemas.property import Property, Review, Booking
-from reservation_system.schemas.user import Tenant
-from reservation_system.web.api.property.schema import PropertyCreate, PropertyUpdate, ReviewCreate, ReviewUpdate, BookingCreate
+from ..repositories import PropertyRepository
+from ..schemas.property import Booking, Property, Review
+from ..schemas.user import Tenant
+from ..utils.responses import Error, SuccessResponse
+from ..web.api.property.schema import (
+    BookingCreate,
+    PropertyCreate,
+    PropertyUpdate,
+    ReviewCreate,
+    ReviewUpdate,
+)
 
 
 class PropertyController:
@@ -22,11 +28,14 @@ class PropertyController:
         if not property:
             raise Error.NOT_FOUND
 
-        property_data = {**property.model_dump(), "current_occupant": len(property.tenants)}
-        print(property_data)
+        property_data = {
+            **property.model_dump(),
+            "current_occupant": len(property.tenants),
+        }
+
         return SuccessResponse(
             message="Property retrieved",
-            data=Property(**property_data).model_dump()
+            data=Property(**property_data).model_dump(),
         )
 
     async def get_properties(self):
@@ -35,32 +44,33 @@ class PropertyController:
 
         :return: Properties.
         """
-
         properties = await self.repo.get_all()
 
         return SuccessResponse(
             message="Properties retrieved",
             data=[
                 Property(
-                **{**property.model_dump(), "current_occupant": len(property.tenants)}
+                    **{
+                        **property.model_dump(),
+                        "current_occupant": len(property.tenants),
+                    }
                 ).model_dump()
                 for property in properties
-            ]
+            ],
         )
 
     async def create_property(self, data: PropertyCreate):
         """
         Create property.
 
-        :param property: property data.
+        :param data: property data.
         :return: Property.
         """
-
         property = await self.repo.create(**data.model_dump())
 
         return SuccessResponse(
             message="Property created",
-            data=Property(**property.model_dump()).model_dump()
+            data=Property(**property.model_dump()).model_dump(),
         )
 
     async def update_property(self, property_id: int, data: PropertyUpdate):
@@ -71,7 +81,6 @@ class PropertyController:
         :param data: property data.
         :return: Property.
         """
-
         parsed = {k: v for k, v in data.model_dump().items() if v}
         property = await self.repo.update(property_id=property_id, **parsed)
 
@@ -80,7 +89,7 @@ class PropertyController:
 
         return SuccessResponse(
             message="Property updated",
-            data=Property(**property.model_dump()).model_dump()
+            data=Property(**property.model_dump()).model_dump(),
         )
 
     async def delete_property(self, property_id: int):
@@ -90,7 +99,6 @@ class PropertyController:
         :param property_id: property id.
         :return: Property.
         """
-
         property = await self.repo.delete(property_id=property_id)
 
         if not property:
@@ -98,7 +106,7 @@ class PropertyController:
 
         return SuccessResponse(
             message="Property deleted",
-            data=Property(**property.model_dump()).model_dump()
+            data=Property(**property.model_dump()).model_dump(),
         )
 
     async def get_reviews(self, property_id: int):
@@ -108,46 +116,52 @@ class PropertyController:
         :param property_id: property id.
         :return: Property reviews.
         """
-
         property = await self.repo.get_reviews(property_id=property_id)
 
         return SuccessResponse(
             message="Property reviews retrieved",
-            data=property
+            data=property,
         )
 
     async def add_review(self, property_id: int, user_id: int, data: ReviewCreate):
         """
         Add property review.
-        
+
         :param property_id: property id.
         :param user_id: user id.
-        :param review: review data.
+        :param data: review data.
         :return: Property reviews.
         """
-
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
             raise Error.NOT_FOUND
 
-        review = await self.repo.create_review(property_id, user_id=user_id, **data.model_dump())
+        review = await self.repo.create_review(
+            property_id, user_id=user_id, **data.model_dump()
+        )
 
         return SuccessResponse(
             message="Property review added",
-            data=Review(**review.model_dump()).model_dump()
+            data=Review(**review.model_dump()).model_dump(),
         )
 
-    async def update_review(self, property_id: int, review_id: int, user_id: int, data: ReviewUpdate):
+    async def update_review(
+        self,
+        property_id: int,
+        review_id: int,
+        user_id: int,
+        data: ReviewUpdate,
+    ):
         """
         Update property review.
 
         :param property_id: property id.
         :param review_id: review id.
+        :param user_id: user id.
         :param data: review data.
         :return: Property reviews.
         """
-
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
@@ -160,7 +174,9 @@ class PropertyController:
 
         return SuccessResponse(
             message="Property review updated",
-            data=Review(**{k: v for k, v in review.model_dump().items() if v is not None}).model_dump()
+            data=Review(
+                **{k: v for k, v in review.model_dump().items() if v is not None}
+            ).model_dump(),
         )
 
     async def delete_review(self, property_id: int, review_id: int, user_id: int):
@@ -172,7 +188,6 @@ class PropertyController:
         :param user_id: user id.
         :return: Property reviews.
         """
-
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
@@ -185,7 +200,7 @@ class PropertyController:
 
         return SuccessResponse(
             message="Property review deleted",
-            data=Review(**review.model_dump()).model_dump()
+            data=Review(**review.model_dump()).model_dump(),
         )
 
     async def get_bookings(self, property_id: int):
@@ -195,7 +210,6 @@ class PropertyController:
         :param property_id: property id.
         :return: Property bookings.
         """
-
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
@@ -205,7 +219,7 @@ class PropertyController:
 
         return SuccessResponse(
             message="Property bookings retrieved",
-            data=[Booking(**booking.model_dump()).model_dump() for booking in bookings]
+            data=[Booking(**booking.model_dump()).model_dump() for booking in bookings],
         )
 
     async def book_property(self, property_id: int, user_id: int, data: BookingCreate):
@@ -213,27 +227,39 @@ class PropertyController:
         Book property.
 
         :param property_id: property id.
+        :param user_id: user id.
+        :param data: booking data.
         :return: Property bookings.
         """
-
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
             raise Error.NOT_FOUND
 
         if property.current_occupant >= property.max_occupancy:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Property is full")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Property is full",
+            )
 
-        booking_check = await self.repo.get_booking(user_id=user_id, property_id=property_id)
+        booking_check = await self.repo.get_booking(
+            user_id=user_id,
+            property_id=property_id,
+        )
 
         if booking_check:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You already have a booking")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="You already have a booking",
+            )
 
-        booking = await self.repo.create_booking(property_id=property_id, user_id=user_id, **data.model_dump())
+        booking = await self.repo.create_booking(
+            property_id=property_id, user_id=user_id, **data.model_dump()
+        )
 
         return SuccessResponse(
             message="Property booked",
-            data=Booking(**booking.model_dump()).model_dump()
+            data=Booking(**booking.model_dump()).model_dump(),
         )
 
     async def get_tenants(self, property_id: int):
@@ -243,7 +269,6 @@ class PropertyController:
         :param property_id: property id.
         :return: Property tenants.
         """
-
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
@@ -253,7 +278,7 @@ class PropertyController:
 
         return SuccessResponse(
             message="Property tenants retrieved",
-            data=[Tenant(**tenant.model_dump()).model_dump() for tenant in tenants]
+            data=[Tenant(**tenant.model_dump()).model_dump() for tenant in tenants],
         )
 
     async def add_tenant(self, property_id: int, user_id: int):
@@ -264,7 +289,6 @@ class PropertyController:
         :param user_id: user id.
         :return: Property tenants.
         """
-
         property = await self.repo.get_by_id(property_id=property_id)
 
         if not property:
@@ -273,7 +297,10 @@ class PropertyController:
         tenant_check = await self.repo.get_tenant(user_id=user_id)
 
         if tenant_check.property_id == property_id:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User is already a tenant")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User is already a tenant",
+            )
 
         tenant = await self.repo.add_tenant(property_id=property_id, user_id=user_id)
 
@@ -284,7 +311,7 @@ class PropertyController:
 
         return SuccessResponse(
             message="Tenant added",
-            data=Tenant(**tenant.model_dump()).model_dump()
+            data=Tenant(**tenant.model_dump()).model_dump(),
         )
 
     async def remove_tenant(self, property_id: int, tenant_id: int):
@@ -303,7 +330,9 @@ class PropertyController:
 
         tenant_check = await self.repo.get_tenant(user_id=tenant_id)
 
-        if not tenant_check or (tenant_check and tenant_check.property_id != property_id):
+        if not tenant_check or (
+            tenant_check and tenant_check.property_id != property_id
+        ):
             raise Error.NOT_FOUND
 
         await self.repo.remove_tenant(property_id=property_id, user_id=tenant_id)
@@ -311,5 +340,5 @@ class PropertyController:
 
         return SuccessResponse(
             message="Tenant removed",
-            data=None
+            data=None,
         )

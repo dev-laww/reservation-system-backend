@@ -1,10 +1,10 @@
 from fastapi import HTTPException, status
 
-from reservation_system.schemas.profile import Profile
-from reservation_system.web.api.profile.schema import UpdateProfile, ChangePassword
-from reservation_system.repositories.user import UserRepository
-from reservation_system.utils.responses import SuccessResponse, Error
-from reservation_system.utils.hashing import check_password, hash_password
+from ..repositories import UserRepository
+from ..schemas.profile import Profile
+from ..utils.hashing import check_password, hash_password
+from ..utils.responses import Error, SuccessResponse
+from ..web.api.profile.schema import ChangePassword, UpdateProfile
 
 
 class ProfileController:
@@ -24,7 +24,7 @@ class ProfileController:
 
         return SuccessResponse(
             message="Profile retrieved",
-            data=Profile(**user.model_dump()).model_dump()
+            data=Profile(**user.model_dump()).model_dump(),
         )
 
     async def update_profile(self, user_id: int, data: UpdateProfile):
@@ -35,14 +35,16 @@ class ProfileController:
         :param kwargs: user data.
         :return: User profile.
         """
-        user = await self.repo.update(user_id=user_id, **{k: v for k, v in data.model_dump().items() if v})
+        user = await self.repo.update(
+            user_id=user_id, **{k: v for k, v in data.model_dump().items() if v}
+        )
 
         if not user:
             raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Profile updated",
-            data=Profile(**user.model_dump()).model_dump()
+            data=Profile(**user.model_dump()).model_dump(),
         )
 
     async def change_password(self, user_id: int, data: ChangePassword):
@@ -58,10 +60,14 @@ class ProfileController:
             raise Error.NOT_FOUND
 
         if not check_password(data.old_password, user.password):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password"
+            )
 
         if data.new_password != data.confirm_password:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match"
+            )
 
         password = hash_password(data.new_password)
 
@@ -69,7 +75,7 @@ class ProfileController:
 
         return SuccessResponse(
             message="Password updated",
-            data=Profile(**user_updated.model_dump()).model_dump()
+            data=Profile(**user_updated.model_dump()).model_dump(),
         )
 
     async def get_notifications(self, user_id: int):
@@ -83,7 +89,7 @@ class ProfileController:
 
         return SuccessResponse(
             message="Notifications retrieved",
-            data=[notification.model_dump() for notification in notifications]
+            data=[notification.model_dump() for notification in notifications],
         )
 
     async def mark_read(self, user_id: int, notification_id: int):
@@ -94,14 +100,16 @@ class ProfileController:
         :return: User notifications.
         """
 
-        notification = await self.repo.read_notification(user_id=user_id, notification_id=notification_id)
+        notification = await self.repo.read_notification(
+            user_id=user_id, notification_id=notification_id
+        )
 
         if not notification:
             raise Error.NOT_FOUND
 
         return SuccessResponse(
             message="Notification marked as read",
-            data=notification.model_dump()
+            data=notification.model_dump(),
         )
 
     async def mark_all_read(self, user_id: int):
@@ -129,7 +137,7 @@ class ProfileController:
 
         return SuccessResponse(
             message="Bookings retrieved",
-            data=[booking.model_dump() for booking in bookings]
+            data=[booking.model_dump() for booking in bookings],
         )
 
     async def get_booking(self, user_id: int, booking_id: int):
@@ -148,7 +156,7 @@ class ProfileController:
 
         return SuccessResponse(
             message="Booking retrieved",
-            data=booking.model_dump()
+            data=booking.model_dump(),
         )
 
     async def cancel_booking(self, user_id: int, booking_id: int):
@@ -167,5 +175,5 @@ class ProfileController:
 
         return SuccessResponse(
             message="Booking cancelled",
-            data=booking.model_dump()
+            data=booking.model_dump(),
         )
