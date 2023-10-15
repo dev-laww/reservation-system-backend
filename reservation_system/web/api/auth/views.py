@@ -1,18 +1,18 @@
 from fastapi import APIRouter
 
-from reservation_system.web.api.auth import schema
-from reservation_system.controllers.auth import AuthController
+from ....controllers import AuthController
+from ....schemas import response, request
 
 
 router = APIRouter()
 controller = AuthController()
 
 
-@router.post("/register", response_model=schema.AuthResponse)
-async def register(data: schema.RegisterUser):
+@router.post("/register", response_model=response.AuthResponse)
+async def register(data: request.RegisterUser):
     return await controller.register(data=data)
 
 
-@router.post("/login", response_model=schema.Token)
-async def login(data: schema.LoginUser):
+@router.post("/login", response_model=response.Token)
+async def login(data: request.LoginUser):
     return await controller.login(email=data.email, password=data.password)

@@ -3,8 +3,8 @@ from fastapi import HTTPException, status
 from ..repositories import PropertyRepository
 from ..schemas.property import Booking, Property, Review
 from ..schemas.user import Tenant
-from ..utils.responses import Error, SuccessResponse
-from ..web.api.property.schema import (
+from ..utils.response import Response
+from ..schemas.request import (
     BookingCreate,
     PropertyCreate,
     PropertyUpdate,
@@ -20,22 +20,22 @@ class PropertyController:
         """
         Get property by id.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :return: Property.
         """
-        property = await self.repo.get_by_id(property_id=property_id)
+        data = await self.repo.get_by_id(property_id=property_id)
 
-        if not property:
-            raise Error.NOT_FOUND
+        if not data:
+            raise Response.not_found(message="Property not found")
 
         property_data = {
-            **property.model_dump(),
-            "current_occupant": len(property.tenants),
+            **data.model_dump(),
+            "current_occupant": len(data.tenants),
         }
 
-        return SuccessResponse(
+        return Response.ok(
             message="Property retrieved",
-            data=Property(**property_data).model_dump(),
+            data=Property(**property_data).model_dump()
         )
 
     async def get_properties(self):
@@ -46,16 +46,16 @@ class PropertyController:
         """
         properties = await self.repo.get_all()
 
-        return SuccessResponse(
+        return Response.ok(
             message="Properties retrieved",
             data=[
                 Property(
                     **{
-                        **property.model_dump(),
-                        "current_occupant": len(property.tenants),
+                        **data.model_dump(),
+                        "current_occupant": len(data.tenants),
                     }
                 ).model_dump()
-                for property in properties
+                for data in properties
             ],
         )
 
@@ -66,82 +66,82 @@ class PropertyController:
         :param data: property data.
         :return: Property.
         """
-        property = await self.repo.create(**data.model_dump())
+        data = await self.repo.create(**data.model_dump())
 
-        return SuccessResponse(
+        return Response.ok(
             message="Property created",
-            data=Property(**property.model_dump()).model_dump(),
+            data=Property(**data.model_dump()).model_dump(),
         )
 
     async def update_property(self, property_id: int, data: PropertyUpdate):
         """
-        Update property.
+        Update data.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :param data: property data.
         :return: Property.
         """
         parsed = {k: v for k, v in data.model_dump().items() if v}
-        property = await self.repo.update(property_id=property_id, **parsed)
+        data = await self.repo.update(property_id=property_id, **parsed)
 
-        if not property:
-            raise Error.NOT_FOUND
+        if not data:
+            raise Response.not_found(message="Property not found")
 
-        return SuccessResponse(
+        return Response.ok(
             message="Property updated",
-            data=Property(**property.model_dump()).model_dump(),
+            data=Property(**data.model_dump()).model_dump(),
         )
 
     async def delete_property(self, property_id: int):
         """
         Delete property.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :return: Property.
         """
-        property = await self.repo.delete(property_id=property_id)
+        data = await self.repo.delete(property_id=property_id)
 
-        if not property:
-            raise Error.NOT_FOUND
+        if not data:
+            raise Response.not_found(message="Property not found")
 
-        return SuccessResponse(
+        return Response.ok(
             message="Property deleted",
-            data=Property(**property.model_dump()).model_dump(),
+            data=Property(**data.model_dump()).model_dump(),
         )
 
     async def get_reviews(self, property_id: int):
         """
         Get property reviews.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :return: Property reviews.
         """
-        property = await self.repo.get_reviews(property_id=property_id)
+        reviews = await self.repo.get_reviews(property_id=property_id)
 
-        return SuccessResponse(
+        return Response.ok(
             message="Property reviews retrieved",
-            data=property,
+            data=reviews,
         )
 
     async def add_review(self, property_id: int, user_id: int, data: ReviewCreate):
         """
         Add property review.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :param user_id: user id.
         :param data: review data.
         :return: Property reviews.
         """
-        property = await self.repo.get_by_id(property_id=property_id)
+        prop = await self.repo.get_by_id(property_id=property_id)
 
-        if not property:
-            raise Error.NOT_FOUND
+        if not prop:
+            raise Response.not_found(message="Property not found")
 
         review = await self.repo.create_review(
             property_id, user_id=user_id, **data.model_dump()
         )
 
-        return SuccessResponse(
+        return Response.ok(
             message="Property review added",
             data=Review(**review.model_dump()).model_dump(),
         )
@@ -154,25 +154,27 @@ class PropertyController:
         data: ReviewUpdate,
     ):
         """
-        Update property review.
+        Update data review.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :param review_id: review id.
         :param user_id: user id.
         :param data: review data.
         :return: Property reviews.
         """
-        property = await self.repo.get_by_id(property_id=property_id)
+        prop = await self.repo.get_by_id(property_id=property_id)
 
-        if not property:
-            raise Error.NOT_FOUND
+        if not prop:
+            raise Response.not_found(message="Property not found")
+
+        review = await self.repo.get_review(review_id=review_id)
+
+        if not review or user_id != review.user_id:
+            raise Response.not_found(message="Review not found")
 
         review = await self.repo.update_review(review_id=review_id, **data.model_dump())
 
-        if not review or user_id != review.user_id:
-            raise Error.NOT_FOUND
-
-        return SuccessResponse(
+        return Response.ok(
             message="Property review updated",
             data=Review(
                 **{k: v for k, v in review.model_dump().items() if v is not None}
@@ -181,66 +183,63 @@ class PropertyController:
 
     async def delete_review(self, property_id: int, review_id: int, user_id: int):
         """
-        Delete property review.
+        Delete data review.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :param review_id: review id.
         :param user_id: user id.
         :return: Property reviews.
         """
-        property = await self.repo.get_by_id(property_id=property_id)
+        data = await self.repo.get_by_id(property_id=property_id)
 
-        if not property:
-            raise Error.NOT_FOUND
+        if not data:
+            raise Response.not_found(message="Property not found")
 
         review = await self.repo.get_review(review_id=review_id)
 
         if not review or user_id != review.user_id:
-            raise Error.NOT_FOUND
+            raise Response.not_found(message="Review not found")
 
-        return SuccessResponse(
+        return Response.ok(
             message="Property review deleted",
             data=Review(**review.model_dump()).model_dump(),
         )
 
     async def get_bookings(self, property_id: int):
         """
-        Get property bookings.
+        Get data bookings.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :return: Property bookings.
         """
-        property = await self.repo.get_by_id(property_id=property_id)
+        data = await self.repo.get_by_id(property_id=property_id)
 
-        if not property:
-            raise Error.NOT_FOUND
+        if not data:
+            raise Response.not_found(message="Property not found")
 
         bookings = await self.repo.get_bookings(property_id=property_id)
 
-        return SuccessResponse(
+        return Response.ok(
             message="Property bookings retrieved",
             data=[Booking(**booking.model_dump()).model_dump() for booking in bookings],
         )
 
     async def book_property(self, property_id: int, user_id: int, data: BookingCreate):
         """
-        Book property.
+        Book data.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :param user_id: user id.
         :param data: booking data.
         :return: Property bookings.
         """
-        property = await self.repo.get_by_id(property_id=property_id)
+        prop = await self.repo.get_by_id(property_id=property_id)
 
-        if not property:
-            raise Error.NOT_FOUND
+        if not prop:
+            raise Response.not_found(message="Property not found")
 
-        if property.current_occupant >= property.max_occupancy:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Property is full",
-            )
+        if data.current_occupant >= data.max_occupancy:
+            raise Response.bad_request(message="Property is full")
 
         booking_check = await self.repo.get_booking(
             user_id=user_id,
@@ -248,51 +247,48 @@ class PropertyController:
         )
 
         if booking_check:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="You already have a booking",
-            )
+            raise Response.bad_request(message="You already have a booking")
 
         booking = await self.repo.create_booking(
             property_id=property_id, user_id=user_id, **data.model_dump()
         )
 
-        return SuccessResponse(
+        return Response.ok(
             message="Property booked",
             data=Booking(**booking.model_dump()).model_dump(),
         )
 
     async def get_tenants(self, property_id: int):
         """
-        Get property tenants.
+        Get data tenants.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :return: Property tenants.
         """
-        property = await self.repo.get_by_id(property_id=property_id)
+        data = await self.repo.get_by_id(property_id=property_id)
 
-        if not property:
-            raise Error.NOT_FOUND
+        if not data:
+            raise Response.not_found(message="Property not found")
 
         tenants = await self.repo.get_tenants(property_id=property_id)
 
-        return SuccessResponse(
+        return Response.ok(
             message="Property tenants retrieved",
             data=[Tenant(**tenant.model_dump()).model_dump() for tenant in tenants],
         )
 
     async def add_tenant(self, property_id: int, user_id: int):
         """
-        Add tenant to property.
+        Add tenant to data.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :param user_id: user id.
         :return: Property tenants.
         """
-        property = await self.repo.get_by_id(property_id=property_id)
+        data = await self.repo.get_by_id(property_id=property_id)
 
-        if not property:
-            raise Error.NOT_FOUND
+        if not data:
+            raise Response.not_found(message="Property not found")
 
         tenant_check = await self.repo.get_tenant(user_id=user_id)
 
@@ -305,40 +301,37 @@ class PropertyController:
         tenant = await self.repo.add_tenant(property_id=property_id, user_id=user_id)
 
         if not tenant:
-            raise Error.NOT_FOUND
+            raise Response.bad_request(message="User not found")
 
         await self.repo.increment_occupants(property_id=property_id)
 
-        return SuccessResponse(
-            message="Tenant added",
-            data=Tenant(**tenant.model_dump()).model_dump(),
-        )
+        return Response.ok(message="Tenant added")
 
     async def remove_tenant(self, property_id: int, tenant_id: int):
         """
-        Remove tenant from property.
+        Remove tenant from data.
 
-        :param property_id: property id.
+        :param property_id: data id.
         :param tenant_id: tenant id.
         :return: Property tenants.
         """
 
-        property = await self.repo.get_by_id(property_id=property_id)
+        data = await self.repo.get_by_id(property_id=property_id)
 
-        if not property:
-            raise Error.NOT_FOUND
+        if not data:
+            raise Response.not_found(message="Property not found")
 
         tenant_check = await self.repo.get_tenant(user_id=tenant_id)
 
         if not tenant_check or (
             tenant_check and tenant_check.property_id != property_id
         ):
-            raise Error.NOT_FOUND
+            raise Response.bad_request(message="User is not a tenant")
 
         await self.repo.remove_tenant(property_id=property_id, user_id=tenant_id)
         await self.repo.decrement_occupants(property_id=property_id)
 
-        return SuccessResponse(
+        return Response.ok(
             message="Tenant removed",
             data=None,
         )

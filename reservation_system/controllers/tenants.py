@@ -1,7 +1,8 @@
 from ..repositories import NotificationRepository, UserRepository
 from ..schemas.profile import Notification
+from ..schemas.request import Notify
 from ..schemas.user import Tenant
-from ..utils.responses import Error, SuccessResponse
+from ..utils.response import Response
 
 
 class TenantController:
@@ -18,9 +19,9 @@ class TenantController:
         tenant = await self.repo.get_tenant(user_id=tenant_id)
 
         if not tenant:
-            raise Error.NOT_FOUND
+            raise Response.not_found(message="Tenant not found")
 
-        return SuccessResponse(
+        return Response.ok(
             message="Tenant retrieved",
             data=Tenant(**tenant.model_dump()).model_dump(),
         )
@@ -34,12 +35,12 @@ class TenantController:
 
         tenants = await self.repo.get_tenants()
 
-        return SuccessResponse(
+        return Response.ok(
             message="Tenants retrieved",
             data=[Tenant(**tenant.model_dump()).model_dump() for tenant in tenants],
         )
 
-    async def notify_tenant(self, tenant_id: int, message: str):
+    async def notify_tenant(self, tenant_id: int, message: Notify):
         """
         Notify tenant.
 
@@ -51,15 +52,15 @@ class TenantController:
         tenant = await self.repo.get_tenant(user_id=tenant_id)
 
         if not tenant:
-            raise Error.NOT_FOUND
+            raise Response.not_found(message="Tenant not found")
 
         notification = await self.notif_repo.create(
             user_id=tenant_id,
-            message=message,
+            message=message.message,
             created_by="System",
         )
 
-        return SuccessResponse(
+        return Response.ok(
             message="Tenant notified",
             data=Notification(**notification.model_dump()).model_dump(),
         )
