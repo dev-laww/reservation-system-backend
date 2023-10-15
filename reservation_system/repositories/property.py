@@ -1,5 +1,6 @@
 from prisma import models
 
+from ..schemas.query_params import PropertyQuery
 from ..utils.prisma import get_db_session
 
 
@@ -34,13 +35,57 @@ class PropertyRepository:
             },
         )
 
-    async def get_all(self) -> list[models.Property]:
+    async def get_all(self, filters: PropertyQuery) -> list[models.Property]:
         """
         Get all properties.
 
         :return: list of properties.
         """
+
+        order = None
+        where = None
+
+        if filters.sort and filters.order:
+            order = {filters.sort: filters.order}
+
+        if filters.min_price or filters.max_price or filters.price:
+            where = {"price": {}}
+
+            if filters.min_price:
+                where["price"]["gte"] = filters.min_price
+
+            if filters.max_price:
+                where["price"]["lte"] = filters.max_price
+
+            if filters.price:
+                where["price"] = filters.price
+
+        if filters.min_occupancy or filters.max_occupancy or filters.occupancy:
+            where = {"max_occupancy": {}}
+
+            if filters.min_occupancy:
+                where["max_occupancy"]["gte"] = filters.min_occupancy
+
+            if filters.max_occupancy:
+                where["max_occupancy"]["lte"] = filters.max_occupancy
+
+            if filters.occupancy:
+                where["max_occupancy"] = filters.occupancy
+
+        if filters.sort and filters.order:
+            if filters.sort in (
+                "price",
+                "max_occupancy",
+                "current_occupant",
+                "created_at" "updated_at",
+            ):
+                order = {filters.sort: filters.order}
+
         return await self.prisma_client.property.find_many(
+            take=filters.limit,
+            skip=filters.offset,
+            where=where,
+            order=order,
             include={
                 "images": True,
                 "reviews": True,
@@ -159,7 +204,7 @@ class PropertyRepository:
         :return: list of reviews.
         """
         return await self.prisma_client.review.find_many(
-            where={"property_id": property_id},
+            where={"property_id": property_id}
         )
 
     async def get_review(self, review_id: int) -> models.Review:
@@ -207,7 +252,7 @@ class PropertyRepository:
         :returns: Review.
         """
         return await self.prisma_client.review.delete(
-            where={"property_id": property_id},
+            where={"property_id": property_id}
         )
 
     async def get_bookings(self, property_id: int) -> list[models.Booking]:
@@ -218,7 +263,7 @@ class PropertyRepository:
         :return: list of bookings.
         """
         return await self.prisma_client.booking.find_many(
-            where={"property_id": property_id},
+            where={"property_id": property_id}
         )
 
     async def create_booking(self, property_id: int, **data) -> models.Booking:
@@ -246,7 +291,7 @@ class PropertyRepository:
         """
 
         return await self.prisma_client.booking.find_first(
-            where={"property_id": property_id, "user_id": user_id},
+            where={"property_id": property_id, "user_id": user_id}
         )
 
     async def get_tenants(self, property_id: int) -> list[models.User]:
@@ -257,7 +302,7 @@ class PropertyRepository:
         :return: list of tenants.
         """
         return await self.prisma_client.user.find_many(
-            where={"property_id": property_id},
+            where={"property_id": property_id}
         )
 
     async def add_tenant(self, property_id: int, user_id: int) -> models.User:

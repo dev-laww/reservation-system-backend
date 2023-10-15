@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import Optional
 
+from pydantic import EmailStr
+
 from ..utils.base_schema import CamelBaseModel
 
 
@@ -8,15 +10,28 @@ from ..utils.base_schema import CamelBaseModel
 class RegisterUser(CamelBaseModel):
     first_name: str
     last_name: str
-    email: str
+    email: EmailStr
     phone_number: str
     password: str
     password_confirmation: str
 
 
 class LoginUser(CamelBaseModel):
-    email: str
+    email: EmailStr
     password: str
+
+
+class RefreshToken(CamelBaseModel):
+    refresh_token: str
+
+
+class PasswordReset(CamelBaseModel):
+    token: str
+    password: str
+
+
+class ForgotPassowrd(CamelBaseModel):
+    email: EmailStr
 
 
 # Profile Schemas

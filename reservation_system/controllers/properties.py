@@ -2,6 +2,7 @@ from fastapi import HTTPException, status
 
 from ..repositories import PropertyRepository
 from ..schemas.property import Booking, Property, Review
+from ..schemas.query_params import PropertyQuery
 from ..schemas.request import (
     BookingCreate,
     PropertyCreate,
@@ -38,13 +39,13 @@ class PropertyController:
             data=Property(**property_data).model_dump(),
         )
 
-    async def get_properties(self):
+    async def get_properties(self, filters: PropertyQuery):
         """
         Get all properties.
 
         :return: Properties.
         """
-        properties = await self.repo.get_all()
+        properties = await self.repo.get_all(filters)
 
         return Response.ok(
             message="Properties retrieved",

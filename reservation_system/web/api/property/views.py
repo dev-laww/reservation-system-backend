@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from ....controllers import PropertyController
+from ....schemas.query_params import PropertyQuery
 from ....schemas.request import (
     BookingCreate,
     PropertyCreate,
@@ -15,8 +16,8 @@ controller = PropertyController()
 
 
 @router.get("")
-async def get_properties():
-    return await controller.get_properties()
+async def get_properties(filters: PropertyQuery = Depends()):
+    return await controller.get_properties(filters=filters)
 
 
 @router.get("/{property_id}")
