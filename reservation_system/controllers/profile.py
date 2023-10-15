@@ -1,10 +1,9 @@
 from fastapi import HTTPException, status
-
-from reservation_system.schemas.profile import Profile
-from reservation_system.web.api.profile.schema import UpdateProfile, ChangePassword
 from reservation_system.repositories.user import UserRepository
-from reservation_system.utils.responses import SuccessResponse, Error
+from reservation_system.schemas.profile import Profile
 from reservation_system.utils.hashing import check_password, hash_password
+from reservation_system.utils.responses import Error, SuccessResponse
+from reservation_system.web.api.profile.schema import ChangePassword, UpdateProfile
 
 
 class ProfileController:

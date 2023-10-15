@@ -1,9 +1,8 @@
 from fastapi import HTTPException, status
-
 from reservation_system.repositories.user import UserRepository
-from reservation_system.web.api.auth.schema import RegisterUser, AuthResponse, Token
-from reservation_system.utils.hashing import hash_password, check_password
+from reservation_system.utils.hashing import check_password, hash_password
 from reservation_system.utils.jwt import encode_token
+from reservation_system.web.api.auth.schema import AuthResponse, RegisterUser, Token
 
 
 class AuthController:

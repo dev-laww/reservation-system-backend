@@ -1,16 +1,14 @@
 from fastapi import APIRouter, Depends
-
 from reservation_system.controllers.properties import PropertyController
-from reservation_system.utils.jwt import ADMIN_AUTH, AUTH
 from reservation_system.schemas.query_params import PropertyQuery
+from reservation_system.utils.jwt import ADMIN_AUTH, AUTH
 from reservation_system.web.api.property.schema import (
+    BookingCreate,
     PropertyCreate,
     PropertyUpdate,
     ReviewCreate,
     ReviewUpdate,
-    BookingCreate,
 )
-
 
 router = APIRouter()
 controller = PropertyController()

@@ -1,8 +1,6 @@
 from fastapi import APIRouter
-
-from reservation_system.web.api.auth import schema
 from reservation_system.controllers.auth import AuthController
-
+from reservation_system.web.api.auth import schema
 
 router = APIRouter()
 controller = AuthController()

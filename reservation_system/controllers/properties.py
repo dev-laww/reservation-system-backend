@@ -1,16 +1,15 @@
 from fastapi import HTTPException, status
-
 from reservation_system.repositories.property import PropertyRepository
-from reservation_system.utils.responses import SuccessResponse, Error
-from reservation_system.schemas.property import Property, Review, Booking
-from reservation_system.schemas.user import Tenant
+from reservation_system.schemas.property import Booking, Property, Review
 from reservation_system.schemas.query_params import PropertyQuery
+from reservation_system.schemas.user import Tenant
+from reservation_system.utils.responses import Error, SuccessResponse
 from reservation_system.web.api.property.schema import (
+    BookingCreate,
     PropertyCreate,
     PropertyUpdate,
     ReviewCreate,
     ReviewUpdate,
-    BookingCreate,
 )
 
 

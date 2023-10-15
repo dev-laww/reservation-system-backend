@@ -1,9 +1,7 @@
 from fastapi import APIRouter, Depends
-
 from reservation_system.controllers.tenants import TenantController
 from reservation_system.utils.jwt import ADMIN_AUTH
 from reservation_system.web.api.tenants.schema import Notify
-
 
 router = APIRouter(dependencies=[Depends(ADMIN_AUTH)])
 controller = TenantController()

@@ -1,8 +1,8 @@
-from reservation_system.repositories.user import UserRepository
 from reservation_system.repositories.notification import NotificationRepository
-from reservation_system.utils.responses import SuccessResponse, Error
-from reservation_system.schemas.user import Tenant
+from reservation_system.repositories.user import UserRepository
 from reservation_system.schemas.profile import Notification
+from reservation_system.schemas.user import Tenant
+from reservation_system.utils.responses import Error, SuccessResponse
 
 
 class TenantController:

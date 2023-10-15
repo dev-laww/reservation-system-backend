@@ -1,10 +1,8 @@
 from fastapi import APIRouter, Depends
-
 from reservation_system.controllers.profile import ProfileController
-from reservation_system.utils.jwt import AUTH
 from reservation_system.schemas.token import JWTData
+from reservation_system.utils.jwt import AUTH
 from reservation_system.web.api.profile import schema
-
 
 router = APIRouter()
 controller = ProfileController()

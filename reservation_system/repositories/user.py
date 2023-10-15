@@ -1,5 +1,4 @@
-from prisma import models, enums
-
+from prisma import enums, models
 from reservation_system.utils.prisma import get_db_session
 
 
