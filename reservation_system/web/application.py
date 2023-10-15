@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
-
 from reservation_system.logging import configure_logging
 from reservation_system.web.api.router import api_router
 from reservation_system.web.lifetime import (

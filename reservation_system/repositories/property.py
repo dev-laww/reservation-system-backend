@@ -1,5 +1,4 @@
 from prisma import models
-
 from reservation_system.schemas.query_params import PropertyQuery
 from reservation_system.utils.prisma import get_db_session
 
@@ -16,11 +15,7 @@ class PropertyRepository:
         """
         return await self.prisma_client.property.find_unique(
             where={"id": property_id},
-            include={
-                "images": True,
-                "reviews": True,
-                "tenants": True
-            }
+            include={"images": True, "reviews": True, "tenants": True},
         )
 
     async def get_by_name(self, name: str) -> models.Property:
@@ -36,7 +31,7 @@ class PropertyRepository:
                 "images": True,
                 "reviews": True,
                 "tenants": True,
-            }
+            },
         )
 
     async def get_all(self, filters: PropertyQuery) -> list[models.Property]:
@@ -47,13 +42,13 @@ class PropertyRepository:
         """
 
         order = None
-        where = None
+        where = {}
 
         if filters.sort and filters.order:
             order = {filters.sort: filters.order}
 
         if filters.min_price or filters.max_price or filters.price:
-            where = {"price": {}}
+            where["price"] = {}
 
             if filters.min_price:
                 where["price"]["gte"] = filters.min_price
@@ -65,7 +60,7 @@ class PropertyRepository:
                 where["price"] = filters.price
 
         if filters.min_occupancy or filters.max_occupancy or filters.occupancy:
-            where = {"max_occupancy": {}}
+            where["max_occupancy"] = {}
 
             if filters.min_occupancy:
                 where["max_occupancy"]["gte"] = filters.min_occupancy
@@ -76,26 +71,28 @@ class PropertyRepository:
             if filters.occupancy:
                 where["max_occupancy"] = filters.occupancy
 
+        if len(where) > 1:
+            where = {"AND": [{k: v} for k, v in where.items()]}
+
         if filters.sort and filters.order:
             if filters.sort in (
                 "price",
                 "max_occupancy",
                 "current_occupant",
-                "created_at"
-                "updated_at"
+                "created_at" "updated_at",
             ):
                 order = {filters.sort: filters.order}
 
         return await self.prisma_client.property.find_many(
             take=filters.limit,
             skip=filters.offset,
-            where=where,
+            where=where or None,
             order=order,
             include={
                 "images": True,
                 "reviews": True,
                 "tenants": True,
-            }
+            },
         )
 
     async def create(self, **data) -> models.Property:
@@ -111,7 +108,7 @@ class PropertyRepository:
                 "images": True,
                 "reviews": True,
                 "tenants": True,
-            }
+            },
         )
 
     async def update(self, property_id: int, **kwargs) -> models.Property:
@@ -129,7 +126,7 @@ class PropertyRepository:
                 "images": True,
                 "reviews": True,
                 "tenants": True,
-            }
+            },
         )
 
     async def increment_occupants(self, property_id: int):
@@ -141,16 +138,12 @@ class PropertyRepository:
         """
         return await self.prisma_client.property.update(
             where={"id": property_id},
-            data={
-                "current_occupant": {
-                    "increment": 1
-                }
-            },
+            data={"current_occupant": {"increment": 1}},
             include={
                 "images": True,
                 "reviews": True,
                 "tenants": True,
-            }
+            },
         )
 
     async def decrement_occupants(self, property_id: int):
@@ -162,16 +155,12 @@ class PropertyRepository:
         """
         return await self.prisma_client.property.update(
             where={"id": property_id},
-            data={
-                "current_occupant": {
-                    "decrement": 1
-                }
-            },
+            data={"current_occupant": {"decrement": 1}},
             include={
                 "images": True,
                 "reviews": True,
                 "tenants": True,
-            }
+            },
         )
 
     async def delete(self, property_id: int) -> models.Property:
@@ -187,7 +176,7 @@ class PropertyRepository:
                 "images": True,
                 "reviews": True,
                 "tenants": True,
-            }
+            },
         )
 
     async def add_image(self, property_id: int, url: str) -> models.Property:
@@ -216,7 +205,9 @@ class PropertyRepository:
         :param property_id: property id.
         :return: list of reviews.
         """
-        return await self.prisma_client.review.find_many(where={"property_id": property_id})
+        return await self.prisma_client.review.find_many(
+            where={"property_id": property_id}
+        )
 
     async def get_review(self, review_id: int) -> models.Review:
         """
@@ -262,7 +253,9 @@ class PropertyRepository:
         :param property_id: property id.
         :returns: Review.
         """
-        return await self.prisma_client.review.delete(where={"property_id": property_id})
+        return await self.prisma_client.review.delete(
+            where={"property_id": property_id}
+        )
 
     async def get_bookings(self, property_id: int) -> list[models.Booking]:
         """
@@ -271,7 +264,9 @@ class PropertyRepository:
         :param property_id: property id.
         :return: list of bookings.
         """
-        return await self.prisma_client.booking.find_many(where={"property_id": property_id})
+        return await self.prisma_client.booking.find_many(
+            where={"property_id": property_id}
+        )
 
     async def create_booking(self, property_id: int, **data) -> models.Booking:
         """
@@ -298,7 +293,16 @@ class PropertyRepository:
         """
 
         return await self.prisma_client.booking.find_first(
-            where={"property_id": property_id, "user_id": user_id}
+            where={
+                "AND": [
+                    {
+                        "property_id": property_id,
+                    },
+                    {
+                        "user_id": user_id,
+                    },
+                ]
+            }
         )
 
     async def get_tenants(self, property_id: int) -> list[models.User]:
@@ -308,7 +312,9 @@ class PropertyRepository:
         :param property_id: property id.
         :return: list of tenants.
         """
-        return await self.prisma_client.user.find_many(where={"property_id": property_id})
+        return await self.prisma_client.user.find_many(
+            where={"property_id": property_id}
+        )
 
     async def add_tenant(self, property_id: int, user_id: int) -> models.User:
         """

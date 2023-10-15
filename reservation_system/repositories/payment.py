@@ -1,5 +1,4 @@
 from prisma import models
-
 from reservation_system.utils.prisma import get_db_session
 
 
@@ -53,7 +52,6 @@ class PaymentRepository:
         :return: Payment.
         """
         return await self.prisma_client.payment.delete(where={"id": payment_id})
-
 
     async def mark_paid(self, payment_id: int) -> models.Payment:
         """

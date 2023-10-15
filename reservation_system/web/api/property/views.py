@@ -1,10 +1,14 @@
 from fastapi import APIRouter, Depends
-
 from reservation_system.controllers.properties import PropertyController
-from reservation_system.utils.jwt import ADMIN_AUTH, AUTH
 from reservation_system.schemas.query_params import PropertyQuery
-from reservation_system.web.api.property.schema import PropertyCreate, PropertyUpdate, ReviewCreate, ReviewUpdate, BookingCreate
-
+from reservation_system.utils.jwt import ADMIN_AUTH, AUTH
+from reservation_system.web.api.property.schema import (
+    BookingCreate,
+    PropertyCreate,
+    PropertyUpdate,
+    ReviewCreate,
+    ReviewUpdate,
+)
 
 router = APIRouter()
 controller = PropertyController()
@@ -41,13 +45,19 @@ async def get_reviews(property_id: int):
 
 
 @router.post("/{property_id}/reviews")
-async def create_review(property_id: int, data: ReviewCreate, user = Depends(AUTH)):
-    return await controller.add_review(property_id=property_id, user_id=user.id, data=data)
+async def create_review(property_id: int, data: ReviewCreate, user=Depends(AUTH)):
+    return await controller.add_review(
+        property_id=property_id, user_id=user.id, data=data
+    )
 
 
 @router.put("/{property_id}/reviews/{review_id}")
-async def update_review(property_id: int, review_id: int, data: ReviewUpdate, user = Depends(AUTH)):
-    return await controller.update_review(property_id=property_id, review_id=review_id, user_id=user.id, data=data)
+async def update_review(
+    property_id: int, review_id: int, data: ReviewUpdate, user=Depends(AUTH)
+):
+    return await controller.update_review(
+        property_id=property_id, review_id=review_id, user_id=user.id, data=data
+    )
 
 
 @router.get("/{property_id}/bookings")
@@ -56,8 +66,10 @@ async def get_bookings(property_id: int):
 
 
 @router.post("/{property_id}/bookings")
-async def create_booking(property_id: int, data: BookingCreate, user = Depends(AUTH)):
-    return await controller.book_property(property_id=property_id, user_id=user.id, data=data)
+async def create_booking(property_id: int, data: BookingCreate, user=Depends(AUTH)):
+    return await controller.book_property(
+        property_id=property_id, user_id=user.id, data=data
+    )
 
 
 @router.get("/{property_id}/tenants")

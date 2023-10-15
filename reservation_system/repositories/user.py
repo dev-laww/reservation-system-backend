@@ -1,5 +1,6 @@
-from prisma import models, enums
+from datetime import datetime
 
+from prisma import enums, models
 from reservation_system.utils.prisma import get_db_session
 
 
@@ -83,7 +84,18 @@ class UserRepository:
         :param booking_id: booking id.
         :return: Booking.
         """
-        return await self.prisma_client.booking.find_first(where={"id": booking_id, "user_id": user_id})
+        return await self.prisma_client.booking.find_first(
+            where={
+                "AND": [
+                    {
+                        "id": booking_id,
+                    },
+                    {
+                        "user_id": user_id,
+                    },
+                ]
+            }
+        )
 
     async def cancel_booking(self, user_id: int, booking_id: int) -> models.Booking:
         """
@@ -95,8 +107,14 @@ class UserRepository:
         """
         if not await self.prisma_client.booking.find_first(
             where={
-                "id": booking_id,
-                "user_id": user_id,
+                "AND": [
+                    {
+                        "id": booking_id,
+                    },
+                    {
+                        "user_id": user_id,
+                    },
+                ]
             }
         ):
             return
@@ -104,7 +122,6 @@ class UserRepository:
         return await self.prisma_client.booking.update(
             where={
                 "id": booking_id,
-                "user_id": user_id,
             },
             data={"status": enums.BookingStatus.canceled},
         )
@@ -125,9 +142,11 @@ class UserRepository:
         :param user_id: user id.
         :return: list of notifications.
         """
-        return await self.prisma_client.notification.find_many(where={"user_id": user_id})
+        return await self.prisma_client.notification.find_many(
+            where={"user_id": user_id}
+        )
 
-    async def read_notification(self, user_id: int, notification_id: int) -> models.Notification:
+    async def read_notification(self, notification_id: int) -> models.Notification:
         """
         Read user notification.
 
@@ -136,13 +155,14 @@ class UserRepository:
         :return: Notification.
         """
 
-        if not await self.prisma_client.notification.find_first(where={"id": notification_id}):
+        if not await self.prisma_client.notification.find_first(
+            where={"id": notification_id}
+        ):
             return None
 
         return await self.prisma_client.notification.update(
             where={
                 "id": notification_id,
-                "user_id": user_id,
             },
             data={"seen": True},
         )
@@ -191,3 +211,73 @@ class UserRepository:
 
         if not tenant or not tenant.property_id:
             return
+
+    async def get_refresh_token(self, user_id: int) -> models.RefreshToken | None:
+        """
+        Get user refresh token.
+
+        :param user_id: user id.
+        :return: RefreshToken.
+        """
+        return await self.prisma_client.refreshtoken.find_first(
+            where={
+                "AND": [
+                    {
+                        "user_id": user_id,
+                    },
+                    {"expires_at": {"gt": datetime.now()}},
+                ]
+            }
+        )
+
+    async def create_refresh_token(self, **data) -> models.RefreshToken:
+        """
+        Create user refresh token.
+
+        :param data: refresh token data.
+        :return: RefreshToken.
+        """
+
+        return await self.prisma_client.refreshtoken.create(data=data)
+
+    async def delete_refresh_token(self, user_id: int) -> models.RefreshToken:
+        """
+        Delete user refresh token.
+
+        :param user_id: user id.
+        :return: RefreshToken.
+        """
+        return await self.prisma_client.refreshtoken.delete(where={"user_id": user_id})
+
+    async def get_email_token(self, code: str, type: enums.TokenType):
+        """
+        Get email token.
+
+        :param code: email token code.
+        :return: EmailToken.
+        """
+        return await self.prisma_client.emailtoken.find_first(
+            where={"AND": [{"token": code}, {"type": type}]}
+        )
+
+    async def add_email_token(self, **data) -> models.EmailToken:
+        """
+        Add email token.
+
+        :param data: email token data.
+        :return: EmailToken.
+        """
+        return await self.prisma_client.emailtoken.create(data=data)
+
+    async def delete_email_token(self, code: str) -> models.EmailToken:
+        """
+        Delete email token.
+
+        :param code: email token code.
+        :return: EmailToken.
+        """
+        return await self.prisma_client.emailtoken.delete(
+            where={
+                "token": code,
+            }
+        )

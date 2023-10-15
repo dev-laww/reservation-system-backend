@@ -1,10 +1,8 @@
 from fastapi import APIRouter, Depends
-
 from reservation_system.controllers.profile import ProfileController
-from reservation_system.utils.jwt import AUTH
 from reservation_system.schemas.token import JWTData
+from reservation_system.utils.jwt import AUTH
 from reservation_system.web.api.profile import schema
-
 
 router = APIRouter()
 controller = ProfileController()
@@ -31,7 +29,9 @@ async def get_notifications(user: JWTData = Depends(AUTH)):
 
 
 @router.put("/notifications/{notification_id}")
-async def mark_notification_as_read(notification_id: int, user: JWTData = Depends(AUTH)):
+async def mark_notification_as_read(
+    notification_id: int, user: JWTData = Depends(AUTH)
+):
     return await controller.mark_read(notification_id=notification_id, user_id=user.id)
 
 

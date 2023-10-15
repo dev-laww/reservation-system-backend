@@ -1,13 +1,12 @@
 from datetime import datetime, timedelta
 
-from jose import jwt, JWTError
 from fastapi import HTTPException, Request, status
 from fastapi.security import HTTPBearer
-
+from jose import JWTError, jwt
+from reservation_system.repositories.user import UserRepository
+from reservation_system.schemas.token import JWTData
 from reservation_system.settings import settings
 from reservation_system.utils.responses import Error
-from reservation_system.schemas.token import JWTData
-from reservation_system.repositories.user import UserRepository
 
 
 def encode_token(data: dict, expire_days: int = 1) -> str:
@@ -35,10 +34,14 @@ def decode_token(token: str) -> dict:
         decoded = jwt.decode(token, key=settings.jwt_secret, algorithms=["HS256"])
 
         if decoded["exp"] < datetime.now().timestamp():
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired"
+            )
 
     except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
+        )
 
     return decoded
 
@@ -62,7 +65,6 @@ class TokenBearer(HTTPBearer):
             raise Error.UNAUTHORIZED
 
         return jwt
-
 
     def verify_jwt(self, token: str):
         return JWTData(**decode_token(token))
