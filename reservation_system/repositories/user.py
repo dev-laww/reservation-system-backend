@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from prisma import enums, models
 from reservation_system.utils.prisma import get_db_session
 
@@ -198,3 +200,84 @@ class UserRepository:
 
         if not tenant or not tenant.property_id:
             return
+
+    async def get_refresh_token(self, user_id: int) -> models.RefreshToken | None:
+        """
+        Get user refresh token.
+
+        :param user_id: user id.
+        :return: RefreshToken.
+        """
+        return await self.prisma_client.refreshtoken.find_first(
+            where={
+                "AND": [
+                    {
+                        "user_id": user_id,
+                    },
+                    {
+                        "expires_at": {"gt": datetime.now()}
+                    }
+                ]
+            }
+        )
+
+    async def create_refresh_token(self, **data) -> models.RefreshToken:
+        """
+        Create user refresh token.
+
+        :param data: refresh token data.
+        :return: RefreshToken.
+        """
+
+        return await self.prisma_client.refreshtoken.create(data=data)
+
+    async def delete_refresh_token(self, user_id: int) -> models.RefreshToken:
+        """
+        Delete user refresh token.
+
+        :param user_id: user id.
+        :return: RefreshToken.
+        """
+        return await self.prisma_client.refreshtoken.delete(where={"user_id": user_id})
+
+    async def get_email_token(self, code: str, type: enums.TokenType):
+        """
+        Get email token.
+
+        :param code: email token code.
+        :return: EmailToken.
+        """
+        return await self.prisma_client.emailtoken.find_first(
+            where={
+                "AND": [
+                    {
+                        "token": code
+                    },
+                    {
+                        "type": type
+                    }
+                ]
+            }
+        )
+
+    async def add_email_token(self, **data) -> models.EmailToken:
+        """
+        Add email token.
+
+        :param data: email token data.
+        :return: EmailToken.
+        """
+        return await self.prisma_client.emailtoken.create(data=data)
+
+    async def delete_email_token(self, code: str) -> models.EmailToken:
+        """
+        Delete email token.
+
+        :param code: email token code.
+        :return: EmailToken.
+        """
+        return await self.prisma_client.emailtoken.delete(
+            where={
+                "token": code,
+            }
+        )
