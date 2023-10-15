@@ -22,6 +22,8 @@ class AuthResponse(CamelBaseModel):
     first_name: str
     last_name: str
     email: str
+    access_token: str
+    refresh_token: str
 
 
 class Token(AuthResponse):

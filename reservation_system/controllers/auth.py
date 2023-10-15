@@ -34,7 +34,15 @@ class AuthController:
         return AuthResponse(
             status="success",
             message="User created successfully",
-            **result.model_dump(exclude_none=True)
+            **result.model_dump(exclude_none=True),
+            access_token=encode_token(
+                {"id": result.id, "email": result.email, "isAdmin": result.admin},
+                expire_days=1
+            ),
+            refresh_token=encode_token(
+                {"id": result.id, "email": result.email, "isAdmin": result.admin},
+                expire_days=30
+            )
         )
 
     async def login(self, email: str, password: str):
