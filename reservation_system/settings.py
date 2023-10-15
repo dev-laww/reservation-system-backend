@@ -41,6 +41,14 @@ class Settings(BaseSettings):
     # JWT settings
     jwt_secret: str
 
+    # Mail settings
+    mail_username: str
+    mail_password: str
+    mail_from: str
+    mail_port: int
+
+    server_url: str
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_prefix="RESERVATION_SYSTEM_BACKEND_",

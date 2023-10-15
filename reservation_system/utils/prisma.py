@@ -2,7 +2,6 @@ import asyncio
 
 from prisma import Prisma
 
-
 prisma = Prisma()
 asyncio.create_task(prisma.connect())
 

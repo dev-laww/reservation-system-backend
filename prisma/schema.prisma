@@ -27,6 +27,8 @@ model User {
   payments      Payment[]
   notifications Notification[]
   property      Property?      @relation(fields: [property_id], references: [id], onDelete: SetNull)
+  tokens        RefreshToken[]
+  email_tokens  EmailToken[]
 
   @@map("users")
 }
@@ -121,6 +123,36 @@ model Payment {
 
   @@map("payments")
 }
+
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  token     String   @unique
+  created_at DateTime @default(now())
+  expires_at   DateTime
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("access_tokens")
+}
+
+
+model EmailToken {
+  id        Int      @id @default(autoincrement())
+  email     String
+  token     String   @unique
+  type      TokenType
+  created_at DateTime @default(now())
+  user      User     @relation(fields: [email], references: [email], onDelete: Cascade)
+
+  @@map("email_tokens")
+}
+
+
+enum TokenType {
+  reset
+}
+
 
 enum PaymentType {
   cash
