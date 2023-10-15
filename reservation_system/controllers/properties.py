@@ -4,6 +4,7 @@ from reservation_system.repositories.property import PropertyRepository
 from reservation_system.utils.responses import SuccessResponse, Error
 from reservation_system.schemas.property import Property, Review, Booking
 from reservation_system.schemas.user import Tenant
+from reservation_system.schemas.query_params import PropertyQuery
 from reservation_system.web.api.property.schema import PropertyCreate, PropertyUpdate, ReviewCreate, ReviewUpdate, BookingCreate
 
 
@@ -29,14 +30,14 @@ class PropertyController:
             data=Property(**property_data).model_dump()
         )
 
-    async def get_properties(self):
+    async def get_properties(self, filters: PropertyQuery):
         """
         Get all properties.
 
         :return: Properties.
         """
 
-        properties = await self.repo.get_all()
+        properties = await self.repo.get_all(filters)
 
         return SuccessResponse(
             message="Properties retrieved",

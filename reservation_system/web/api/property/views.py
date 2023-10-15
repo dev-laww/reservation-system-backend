@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 
 from reservation_system.controllers.properties import PropertyController
 from reservation_system.utils.jwt import ADMIN_AUTH, AUTH
+from reservation_system.schemas.query_params import PropertyQuery
 from reservation_system.web.api.property.schema import PropertyCreate, PropertyUpdate, ReviewCreate, ReviewUpdate, BookingCreate
 
 
@@ -10,8 +11,8 @@ controller = PropertyController()
 
 
 @router.get("")
-async def get_properties():
-    return await controller.get_properties()
+async def get_properties(q: PropertyQuery = Depends()):
+    return await controller.get_properties(q)
 
 
 @router.get("/{property_id}")
