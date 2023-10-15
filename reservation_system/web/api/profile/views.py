@@ -30,8 +30,10 @@ async def get_notifications(user: JWTData = Depends(AUTH)):
 
 
 @router.put("/notifications/{notification_id}")
-async def mark_notification_as_read(notification_id: int,
-                                    user: JWTData = Depends(AUTH)):
+async def mark_notification_as_read(
+    notification_id: int,
+    user: JWTData = Depends(AUTH),
+):
     return await controller.mark_read(notification_id=notification_id, user_id=user.id)
 
 

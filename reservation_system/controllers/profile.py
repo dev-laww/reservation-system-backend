@@ -2,9 +2,9 @@ from fastapi import HTTPException, status
 
 from ..repositories import UserRepository
 from ..schemas.profile import Profile
+from ..schemas.request import ChangePassword, UpdateProfile
 from ..utils.hashing import check_password, hash_password
 from ..utils.response import Response
-from ..schemas.request import ChangePassword, UpdateProfile
 
 
 class ProfileController:
@@ -52,12 +52,14 @@ class ProfileController:
 
         if not check_password(data.old_password, user.password):
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Incorrect password",
             )
 
         if data.new_password != data.confirm_password:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Passwords do not match",
             )
 
         password = hash_password(data.new_password)
@@ -93,7 +95,8 @@ class ProfileController:
         """
 
         notification = await self.repo.read_notification(
-            user_id=user_id, notification_id=notification_id
+            user_id=user_id,
+            notification_id=notification_id,
         )
 
         if not notification:

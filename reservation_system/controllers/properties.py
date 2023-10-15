@@ -2,8 +2,6 @@ from fastapi import HTTPException, status
 
 from ..repositories import PropertyRepository
 from ..schemas.property import Booking, Property, Review
-from ..schemas.user import Tenant
-from ..utils.response import Response
 from ..schemas.request import (
     BookingCreate,
     PropertyCreate,
@@ -11,6 +9,8 @@ from ..schemas.request import (
     ReviewCreate,
     ReviewUpdate,
 )
+from ..schemas.user import Tenant
+from ..utils.response import Response
 
 
 class PropertyController:
@@ -35,7 +35,7 @@ class PropertyController:
 
         return Response.ok(
             message="Property retrieved",
-            data=Property(**property_data).model_dump()
+            data=Property(**property_data).model_dump(),
         )
 
     async def get_properties(self):

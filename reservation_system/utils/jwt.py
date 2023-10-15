@@ -3,10 +3,11 @@ from datetime import datetime, timedelta
 from fastapi import HTTPException, Request, status
 from fastapi.security import HTTPBearer
 from jose import JWTError, jwt
-from reservation_system.repositories.user import UserRepository
-from reservation_system.schemas.token import JWTData
-from reservation_system.settings import settings
-from reservation_system.utils.responses import Error
+
+from ..repositories.user import UserRepository
+from ..schemas.token import JWTData
+from ..settings import settings
+from ..utils.response import Response
 
 
 def encode_token(data: dict, expire_days: int = 1) -> str:
@@ -35,12 +36,14 @@ def decode_token(token: str) -> dict:
 
         if decoded["exp"] < datetime.now().timestamp():
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired"
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token expired",
             )
 
     except JWTError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
         )
 
     return decoded
@@ -57,12 +60,12 @@ class TokenBearer(HTTPBearer):
         credentials = await super().__call__(request)
 
         if not credentials or not credentials.scheme == "Bearer":
-            raise Error.UNAUTHORIZED
+            raise Response.unauthorized(message="Invalid token")
 
         jwt = self.verify_jwt(credentials.credentials)
 
         if not await user_repo.get_by_id(jwt.id):
-            raise Error.UNAUTHORIZED
+            raise Response.unauthorized(message="User does not exist")
 
         return jwt
 
@@ -75,7 +78,7 @@ class AdminTokenBearer(TokenBearer):
         jwt = super().verify_jwt(token)
 
         if not jwt.is_admin:
-            raise Error.FORBIDDEN
+            raise Response.forbidden(message="Unauthorized")
         return jwt
 
 

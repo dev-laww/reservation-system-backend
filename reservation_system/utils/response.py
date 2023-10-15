@@ -90,4 +90,3 @@ class Response:
             status_code=status.HTTP_409_CONFLICT,
             detail=message,
         )
-

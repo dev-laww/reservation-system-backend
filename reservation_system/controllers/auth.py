@@ -58,7 +58,7 @@ class AuthController:
         data = {
             **user.model_dump(exclude=("password",)),
             "access_token": encode_token(session, expire_days=1),
-            "refresh_token": encode_token(session, expire_days=30)
+            "refresh_token": encode_token(session, expire_days=30),
         }
 
         return Token(

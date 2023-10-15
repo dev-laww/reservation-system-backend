@@ -1,4 +1,4 @@
-from prisma import models, enums
+from prisma import enums, models
 
 from ..utils.prisma import get_db_session
 
@@ -83,7 +83,9 @@ class UserRepository:
         :param booking_id: booking id.
         :return: Booking.
         """
-        return await self.prisma_client.booking.find_first(where={"id": booking_id, "user_id": user_id})
+        return await self.prisma_client.booking.find_first(
+            where={"id": booking_id, "user_id": user_id},
+        )
 
     async def cancel_booking(self, user_id: int, booking_id: int) -> models.Booking:
         """
@@ -97,7 +99,7 @@ class UserRepository:
             where={
                 "id": booking_id,
                 "user_id": user_id,
-            }
+            },
         ):
             return
 
@@ -125,9 +127,15 @@ class UserRepository:
         :param user_id: user id.
         :return: list of notifications.
         """
-        return await self.prisma_client.notification.find_many(where={"user_id": user_id})
+        return await self.prisma_client.notification.find_many(
+            where={"user_id": user_id},
+        )
 
-    async def read_notification(self, user_id: int, notification_id: int) -> models.Notification:
+    async def read_notification(
+        self,
+        user_id: int,
+        notification_id: int,
+    ) -> models.Notification:
         """
         Read user notification.
 
@@ -136,7 +144,9 @@ class UserRepository:
         :return: Notification.
         """
 
-        if not await self.prisma_client.notification.find_first(where={"id": notification_id}):
+        if not await self.prisma_client.notification.find_first(
+            where={"id": notification_id},
+        ):
             return None
 
         return await self.prisma_client.notification.update(

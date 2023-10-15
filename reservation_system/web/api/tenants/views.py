@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Depends
 
 from ....controllers import TenantController
-from ....utils.jwt import ADMIN_AUTH
 from ....schemas.request import Notify
-
+from ....utils.jwt import ADMIN_AUTH
 
 router = APIRouter(dependencies=[Depends(ADMIN_AUTH)])
 controller = TenantController()

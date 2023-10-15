@@ -1,6 +1,5 @@
 from typing import Optional
 
-from fastapi import HTTPException, status
 from pydantic import BaseModel
 
 from ..utils.base_schema import CamelBaseModel
@@ -27,4 +26,3 @@ class Response(BaseModel):
     success: bool = True
     message: str
     data: Optional[list | dict] = None
-

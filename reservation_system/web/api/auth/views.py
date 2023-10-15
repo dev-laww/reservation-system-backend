@@ -1,8 +1,7 @@
 from fastapi import APIRouter
 
 from ....controllers import AuthController
-from ....schemas import response, request
-
+from ....schemas import request, response
 
 router = APIRouter()
 controller = AuthController()
