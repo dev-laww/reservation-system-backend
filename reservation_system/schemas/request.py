@@ -1,8 +1,38 @@
 from datetime import datetime
+from typing import Optional
 
-from reservation_system.utils.base_schema import CamelBaseModel
+from ..utils.base_schema import CamelBaseModel
 
 
+# Auth Schemas
+class RegisterUser(CamelBaseModel):
+    first_name: str
+    last_name: str
+    email: str
+    phone_number: str
+    password: str
+    password_confirmation: str
+
+
+class LoginUser(CamelBaseModel):
+    email: str
+    password: str
+
+
+# Profile Schemas
+class UpdateProfile(CamelBaseModel):
+    first_name: Optional[str] = ""
+    last_name: Optional[str] = ""
+    phone_number: Optional[str] = ""
+
+
+class ChangePassword(CamelBaseModel):
+    old_password: str
+    new_password: str
+    confirm_password: str
+
+
+# Property Schemas
 class PropertyCreate(CamelBaseModel):
     name: str
     description: str
@@ -40,3 +70,8 @@ class ReviewUpdate(CamelBaseModel):
 class BookingCreate(CamelBaseModel):
     start_date: datetime
     end_date: datetime
+
+
+# Tenant Schemas
+class Notify(CamelBaseModel):
+    message: str
