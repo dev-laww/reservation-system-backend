@@ -6,5 +6,5 @@ views to handle requests and responses.
 
 from .auth import AuthController
 from .profile import ProfileController
-from .properties import PropertyController
-from .tenants import TenantController
+from .properties import PropertiesController
+from .tenants import TenantsController

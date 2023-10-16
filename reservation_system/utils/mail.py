@@ -1,12 +1,12 @@
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
-from reservation_system.settings import settings
+from ..settings import settings
 
 mail_config = ConnectionConfig(
     MAIL_USERNAME=settings.mail_username,
     MAIL_PASSWORD=settings.mail_password,
     MAIL_FROM=settings.mail_from,
     MAIL_SERVER="smtp.gmail.com",
-    MAIL_PORT=587,
+    MAIL_PORT=settings.mail_port,
     MAIL_STARTTLS=True,
     MAIL_SSL_TLS=False,
 )

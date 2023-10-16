@@ -14,7 +14,7 @@ from ..schemas.user import Tenant
 from ..utils.response import Response
 
 
-class PropertyController:
+class PropertiesController:
     repo = PropertyRepository()
 
     async def get_property(self, property_id: int):

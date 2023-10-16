@@ -5,7 +5,7 @@ from ..schemas.user import Tenant
 from ..utils.response import Response
 
 
-class TenantController:
+class TenantsController:
     repo = UserRepository()
     notif_repo = NotificationRepository()
 

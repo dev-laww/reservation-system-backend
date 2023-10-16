@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from reservation_system.schemas.user import User
-from reservation_system.utils.base_schema import CamelBaseModel
+from ..schemas.user import User
+from ..utils.base_schema import CamelBaseModel
 
 
 class Profile(User):

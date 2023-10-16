@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from ....controllers import PropertyController
+from ....controllers import PropertiesController
 from ....schemas.query_params import PropertyQuery
 from ....schemas.request import (
     BookingCreate,
@@ -12,7 +12,7 @@ from ....schemas.request import (
 from ....utils.jwt import ADMIN_AUTH, AUTH
 
 router = APIRouter()
-controller = PropertyController()
+controller = PropertiesController()
 
 
 @router.get("")
