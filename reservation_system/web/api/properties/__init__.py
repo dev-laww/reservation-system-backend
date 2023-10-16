@@ -1,3 +1,3 @@
-from reservation_system.web.api.properties.views import router
+from .views import router
 
-__all__ = ["router"]
+__all__ = ['router']
