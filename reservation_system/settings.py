@@ -31,12 +31,14 @@ class Settings(BaseSettings):
     # quantity of workers for uvicorn
     workers_count: int = 1
     # Enable uvicorn reloading
-    reload: bool = False
+    reload: bool = True
 
     # Current environment
     environment: str = "dev"
 
     log_level: LogLevel = LogLevel.INFO
+
+    database_url: str
 
     # JWT settings
     jwt_secret: str
@@ -47,11 +49,9 @@ class Settings(BaseSettings):
     mail_from: str
     mail_port: int
 
-    server_url: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
-        env_prefix="RESERVATION_SYSTEM_BACKEND_",
         env_file_encoding="utf-8",
     )
 
