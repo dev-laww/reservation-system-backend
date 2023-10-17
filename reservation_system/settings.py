@@ -49,10 +49,14 @@ class Settings(BaseSettings):
     mail_from: str
     mail_port: int
 
+    # Thumbsnap
+    thumbsnap_secret: str
+
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
+        extra="ignore",
     )
 
 

@@ -177,6 +177,22 @@ class PropertyRepository:
             },
         )
 
+    async def get_image(self, property_id: int, image_id: int) -> models.Image:
+        """
+        Get property image.
+        
+        :param property_id: property id.
+        :param image_id: image id.
+        """
+        return await self.prisma_client.image.find_first(
+            where={
+                "AND": [
+                    {"property_id": property_id},
+                    {"id": image_id},
+                ],
+            },
+        )
+
     async def add_image(self, property_id: int, url: str) -> models.Property:
         """
         Add property image.
@@ -194,6 +210,18 @@ class PropertyRepository:
                     },
                 },
             },
+        )
+
+    
+    async def remove_image(self, image_id: int) -> models.Property:
+        """
+        Remove property image.
+
+        :param image_id: image id.
+        :return: Property.
+        """
+        return await self.prisma_client.image.delete(
+            where={"id": image_id}
         )
 
     async def get_reviews(self, property_id: int) -> list[models.Review]:

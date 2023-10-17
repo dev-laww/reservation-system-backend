@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile
 
 from ....controllers import PropertiesController
 from ....schemas.query_params import PropertyQuery
@@ -28,6 +28,16 @@ async def get_property(property_id: int):
 @router.post("", dependencies=[Depends(ADMIN_AUTH)])
 async def create_property(data: PropertyCreate):
     return await controller.create_property(data=data)
+
+
+@router.post("/{property_id}/images", dependencies=[Depends(ADMIN_AUTH)])
+async def upload_image(property_id: int, image: UploadFile):
+    return await controller.upload_image(property_id=property_id, image=image)
+
+
+@router.delete("/{property_id}/images/{image_id}", dependencies=[Depends(ADMIN_AUTH)])
+async def delete_image(property_id: int, image_id: int):
+    return await controller.remove_image(property_id=property_id, image_id=image_id)
 
 
 @router.put("/{property_id}", dependencies=[Depends(ADMIN_AUTH)])

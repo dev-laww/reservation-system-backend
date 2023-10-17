@@ -1,4 +1,5 @@
-from fastapi import HTTPException, status
+import requests
+from fastapi import HTTPException, UploadFile, status
 
 from ..repositories import PropertyRepository
 from ..schemas.property import Booking, Property, Review
@@ -11,6 +12,7 @@ from ..schemas.request import (
     ReviewUpdate,
 )
 from ..schemas.user import Tenant
+from ..settings import settings
 from ..utils.response import Response
 
 
@@ -336,3 +338,56 @@ class PropertiesController:
             message="Tenant removed",
             data=None,
         )
+
+    async def upload_image(self, property_id: int, image: UploadFile):
+        """
+        Upload property image.
+
+        :param property_id: data id.
+        :param image: image file.
+        """
+
+        data = await self.repo.get_by_id(property_id=property_id)
+
+        if not data:
+            raise Response.not_found(message="Property not found")
+
+        if "image" not in image.headers.get("Content-Type"):
+            raise Response.bad_request(message="Invalid image file")
+
+        url = "https://thumbsnap.com/api/upload"
+        resp = requests.post(
+            url,
+            data={"key": settings.thumbsnap_secret},
+            files={"media": image.file.read()},
+        )
+
+        if resp.status_code != 200:
+            raise Response.bad_request(message="Image upload failed")
+
+        image = resp.json()["data"]["thumb"]
+        await self.repo.add_image(property_id=property_id, url=image)
+
+        return Response.ok(message="Image uploaded")
+
+    async def remove_image(self, property_id: int, image_id: int):
+        """
+        Remove property image.
+    
+        :param property_id: data id.
+        :param image_id: image id.
+        """
+
+        data = await self.repo.get_by_id(property_id=property_id)
+
+        if not data:
+            raise Response.not_found(message="Property not found")
+
+        image = await self.repo.get_image(property_id=property_id, image_id=image_id)
+
+        if not image:
+            raise Response.not_found(message="Image not found")
+
+        await self.repo.remove_image(image_id=image_id)
+
+        return Response.ok(message="Image removed")
