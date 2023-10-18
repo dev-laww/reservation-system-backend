@@ -28,6 +28,8 @@ python-jose = "^3.3.0"
 fastapi-mail = "^1.4.1"
 python-multipart = "^0.0.6"
 requests = "^2.31.0"
+pyhumps = "^3.8.0"
+python-dotenv = "^1.0.0"
 
 
 [tool.poetry.dev-dependencies]
