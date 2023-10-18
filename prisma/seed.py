@@ -9,8 +9,14 @@ from prisma import Prisma
 
 load_dotenv()
 
-non_relational_tables = [
-    'user'
+seeding_order = [
+    'user',
+    'property',
+    'image',
+    'notification',
+    'booking',
+    'payment',
+    'review'
 ]
 
 
@@ -68,15 +74,16 @@ async def main():
 
     print('Seeding database...')
 
-    for table_name, table_data in seed_map.items():
-        print(f'Seeding {table_name}...')
-
-        if table_name in non_relational_tables:
-            await seed(table_data['data'], table_data['prisma'], table_name)
-
+    for key in seeding_order:
+        print(f'Seeding {key}...')
+        if key not in seed_map:
             continue
 
-        await seed(table_data['data'], table_data['prisma'], table_name)
+        await seed(
+            table_data=seed_map[key]['data'],
+            prisma=seed_map[key]['prisma'],
+            table_name=key
+        )
 
     print('Done.')
 
