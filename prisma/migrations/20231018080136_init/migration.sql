@@ -133,9 +133,6 @@ CREATE TABLE "email_tokens" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_property_id_key" ON "users"("property_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
