@@ -1,0 +1,218 @@
+[
+  {
+    "id": 1,
+    "email": "admin@mail.com",
+    "first_name": "admin",
+    "last_name": "",
+    "password": "$2b$12$hBKN9vl40PBtcWnkCMR/X.ppmUlpfO9aouqR.9.NhmYQ96Rkv11FC",
+    "phone_number": "081234567890",
+    "admin": true
+  },
+  {
+    "id": 2,
+    "first_name": "Alice",
+    "last_name": "Smith",
+    "email": "alice.smith@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 3,
+    "first_name": "Emma",
+    "last_name": "Brown",
+    "email": "emma.brown@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 4,
+    "first_name": "Michael",
+    "last_name": "Davis",
+    "email": "michael.davis@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 5,
+    "first_name": "Sophia",
+    "last_name": "Garcia",
+    "email": "sophia.garcia@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 6,
+    "first_name": "James",
+    "last_name": "Wilson",
+    "email": "james.wilson@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 7,
+    "first_name": "Olivia",
+    "last_name": "Johnson",
+    "email": "olivia.johnson@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 8,
+    "first_name": "William",
+    "last_name": "Smith",
+    "email": "william.smith@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 9,
+    "first_name": "Isabella",
+    "last_name": "Davis",
+    "email": "isabella.davis@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 10,
+    "first_name": "Benjamin",
+    "last_name": "Anderson",
+    "email": "benjamin.anderson@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 11,
+    "first_name": "Mia",
+    "last_name": "Martinez",
+    "email": "mia.martinez@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 12,
+    "first_name": "Ethan",
+    "last_name": "Gonzalez",
+    "email": "ethan.gonzalez@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 13,
+    "first_name": "Camila",
+    "last_name": "Miller",
+    "email": "camila.miller@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 14,
+    "first_name": "Alexander",
+    "last_name": "Lopez",
+    "email": "alexander.lopez@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 15,
+    "first_name": "Abigail",
+    "last_name": "Hernandez",
+    "email": "abigail.hernandez@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 16,
+    "first_name": "Daniel",
+    "last_name": "Moore",
+    "email": "daniel.moore@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 17,
+    "first_name": "Emily",
+    "last_name": "Gonzalez",
+    "email": "emily.gonzalez@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 18,
+    "first_name": "Matthew",
+    "last_name": "Garcia",
+    "email": "matthew.garcia@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 19,
+    "first_name": "Harper",
+    "last_name": "Martinez",
+    "email": "harper.martinez@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 20,
+    "first_name": "Aiden",
+    "last_name": "Taylor",
+    "email": "aiden.taylor@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 21,
+    "first_name": "Sofia",
+    "last_name": "Hernandez",
+    "email": "sofia.hernandez@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 22,
+    "first_name": "Elijah",
+    "last_name": "Garcia",
+    "email": "elijah.garcia@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 23,
+    "first_name": "Scarlett",
+    "last_name": "Johnson",
+    "email": "scarlett.johnson@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  },
+  {
+    "id": 24,
+    "first_name": "Grayson",
+    "last_name": "Brown",
+    "email": "grayson.brown@example.com",
+    "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
+    "phone_number": "081234567890",
+    "admin": false
+  }
+]
