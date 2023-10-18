@@ -1,0 +1,77 @@
+[
+  {
+    "id": 1,
+    "property_id": 1,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 2,
+    "property_id": 1,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 3,
+    "property_id": 1,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 4,
+    "property_id": 2,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 5,
+    "property_id": 2,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 6,
+    "property_id": 2,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 7,
+    "property_id": 3,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 8,
+    "property_id": 3,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 9,
+    "property_id": 3,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 10,
+    "property_id": 4,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 11,
+    "property_id": 4,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 12,
+    "property_id": 4,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 13,
+    "property_id": 5,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 14,
+    "property_id": 5,
+    "url": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 15,
+    "property_id": 5,
+    "url": "https://via.placeholder.com/150"
+  }
+]
