@@ -241,7 +241,7 @@ class PropertiesController:
         if not prop:
             raise Response.not_found(message="Property not found")
 
-        if data.current_occupant >= data.max_occupancy:
+        if prop.current_occupant >= prop.max_occupancy:
             raise Response.bad_request(message="Property is full")
 
         booking_check = await self.repo.get_booking(
