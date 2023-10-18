@@ -14,7 +14,6 @@ class Notification(CamelBaseModel):
     message: str
     created_by: str
     created_at: datetime
-    updated_at: datetime
 
 
 class Booking(CamelBaseModel):

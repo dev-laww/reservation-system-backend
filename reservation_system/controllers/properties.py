@@ -295,6 +295,9 @@ class PropertiesController:
 
         tenant_check = await self.repo.get_tenant(user_id=user_id)
 
+        if not tenant_check:
+            raise Response.not_found(message="User not found")
+
         if tenant_check.property_id == property_id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

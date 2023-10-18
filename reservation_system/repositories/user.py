@@ -204,6 +204,8 @@ class UserRepository:
         if not tenant or not tenant.property_id:
             return
 
+        return tenant
+
     async def get_refresh_token(self, user_id: int) -> models.RefreshToken | None:
         """
         Get user refresh token.

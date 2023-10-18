@@ -13,7 +13,7 @@ datasource db {
 
 model User {
   id            Int            @id @default(autoincrement())
-  property_id   Int?           @unique
+  property_id   Int?
   email         String         @unique
   first_name    String
   last_name     String
