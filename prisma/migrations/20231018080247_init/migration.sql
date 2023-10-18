@@ -102,7 +102,7 @@ CREATE TABLE "payments" (
     "user_id" INTEGER NOT NULL,
     "booking_id" INTEGER NOT NULL,
     "type" "PaymentType" NOT NULL DEFAULT 'cash',
-    "amount" INTEGER NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL,
     "status" "Status" NOT NULL DEFAULT 'pending',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -131,6 +131,9 @@ CREATE TABLE "email_tokens" (
 
     CONSTRAINT "email_tokens_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_property_id_key" ON "users"("property_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");

@@ -114,7 +114,7 @@ model Payment {
   user_id    Int
   booking_id Int         @unique
   type       PaymentType @default(cash)
-  amount     Int
+  amount     Float
   status     Status      @default(pending)
   created_at DateTime    @default(now())
   updated_at DateTime    @updatedAt
@@ -124,35 +124,31 @@ model Payment {
   @@map("payments")
 }
 
-
 model RefreshToken {
-  id        Int      @id @default(autoincrement())
-  user_id   Int
-  token     String   @unique
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  token      String   @unique
   created_at DateTime @default(now())
-  expires_at   DateTime
-  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  expires_at DateTime
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("access_tokens")
 }
 
-
 model EmailToken {
-  id        Int      @id @default(autoincrement())
-  email     String
-  token     String   @unique
-  type      TokenType
-  created_at DateTime @default(now())
-  user      User     @relation(fields: [email], references: [email], onDelete: Cascade)
+  id         Int       @id @default(autoincrement())
+  email      String
+  token      String    @unique
+  type       TokenType
+  created_at DateTime  @default(now())
+  user       User      @relation(fields: [email], references: [email], onDelete: Cascade)
 
   @@map("email_tokens")
 }
 
-
 enum TokenType {
   reset
 }
-
 
 enum PaymentType {
   cash
