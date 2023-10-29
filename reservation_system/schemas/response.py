@@ -10,6 +10,7 @@ class AuthResponse(CamelBaseModel):
     status: str
     message: str
     id: int
+    admin: bool
     first_name: str
     last_name: str
     email: str
