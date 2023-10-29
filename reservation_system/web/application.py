@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+
 from reservation_system.logging import configure_logging
 from reservation_system.web.api.router import api_router
 from reservation_system.web.lifetime import (
@@ -31,5 +33,12 @@ def get_app() -> FastAPI:
 
     # Main router for the API.
     app.include_router(router=api_router, prefix="/api")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_credentials=True,
+        allow_headers=["*"]
+    )
 
     return app
