@@ -26,6 +26,8 @@ CREATE TABLE "users" (
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
+ALTER SEQUENCE "users_id_seq" RESTART WITH 1000;
+
 -- CreateTable
 CREATE TABLE "properties" (
     "id" SERIAL NOT NULL,
@@ -45,6 +47,8 @@ CREATE TABLE "properties" (
     CONSTRAINT "properties_pkey" PRIMARY KEY ("id")
 );
 
+ALTER SEQUENCE "properties_id_seq" RESTART WITH 1000;
+
 -- CreateTable
 CREATE TABLE "images" (
     "id" SERIAL NOT NULL,
@@ -55,6 +59,8 @@ CREATE TABLE "images" (
 
     CONSTRAINT "images_pkey" PRIMARY KEY ("id")
 );
+
+ALTER SEQUENCE "images_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "reviews" (
@@ -68,6 +74,8 @@ CREATE TABLE "reviews" (
 
     CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
+
+ALTER SEQUENCE "reviews_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "bookings" (
@@ -83,6 +91,8 @@ CREATE TABLE "bookings" (
     CONSTRAINT "bookings_pkey" PRIMARY KEY ("id")
 );
 
+ALTER SEQUENCE "bookings_id_seq" RESTART WITH 1000;
+
 -- CreateTable
 CREATE TABLE "notifications" (
     "id" SERIAL NOT NULL,
@@ -95,6 +105,8 @@ CREATE TABLE "notifications" (
 
     CONSTRAINT "notifications_pkey" PRIMARY KEY ("id")
 );
+
+ALTER SEQUENCE "notifications_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "payments" (
@@ -110,6 +122,8 @@ CREATE TABLE "payments" (
     CONSTRAINT "payments_pkey" PRIMARY KEY ("id")
 );
 
+ALTER SEQUENCE "payments_id_seq" RESTART WITH 1000;
+
 -- CreateTable
 CREATE TABLE "access_tokens" (
     "id" SERIAL NOT NULL,
@@ -121,6 +135,8 @@ CREATE TABLE "access_tokens" (
     CONSTRAINT "access_tokens_pkey" PRIMARY KEY ("id")
 );
 
+ALTER SEQUENCE "access_tokens_id_seq" RESTART WITH 1000;
+
 -- CreateTable
 CREATE TABLE "email_tokens" (
     "id" SERIAL NOT NULL,
@@ -131,6 +147,8 @@ CREATE TABLE "email_tokens" (
 
     CONSTRAINT "email_tokens_pkey" PRIMARY KEY ("id")
 );
+
+ALTER SEQUENCE "email_tokens_id_seq" RESTART WITH 1000;
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_property_id_key" ON "users"("property_id");
