@@ -105,14 +105,14 @@ class AuthController:
         :param email: email.
         """
 
-        code = "".join(random.choices(string.digits, k=6))
+        token = "".join(random.choices([*string.digits, *string.ascii_letters], k=20))
 
         asyncio.create_task(
             send_email(
                 to=data.email,
                 subject="Password reset",
                 body=f"""
-                <p>Here is your password reset code: {code}</p>
+                <a>http://localhost:3000/auth/reset-password?token={token}</a>
                 """,
             )
         )
@@ -122,7 +122,7 @@ class AuthController:
 
         await self.repo.add_email_token(
             email=data.email,
-            token=code,
+            token=token,
             type="reset",
         )
         return Response.ok(message="Password reset email sent")
