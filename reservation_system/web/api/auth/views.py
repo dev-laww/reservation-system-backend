@@ -20,10 +20,10 @@ async def login(data: request.LoginUser):
 
 @router.post("/refresh")
 async def refresh_token(
-    refresh: request.RefreshToken, user: token.JWTData = Depends(AUTH)
+    refresh: request.RefreshToken
 ):
     return await controller.refresh_token(
-        user_id=user.id, refresh_token=refresh.refresh_token
+        refresh_token=refresh.refresh_token
     )
 
 

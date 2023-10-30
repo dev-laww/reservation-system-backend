@@ -206,7 +206,7 @@ class UserRepository:
 
         return tenant
 
-    async def get_refresh_token(self, user_id: int) -> models.RefreshToken | None:
+    async def get_refresh_token(self, token: int) -> models.RefreshToken | None:
         """
         Get user refresh token.
 
@@ -217,11 +217,12 @@ class UserRepository:
             where={
                 "AND": [
                     {
-                        "user_id": user_id,
+                        "token": token,
                     },
                     {"expires_at": {"gt": datetime.now()}},
                 ]
-            }
+            },
+            include={"user": True},
         )
 
     async def create_refresh_token(self, **data) -> models.RefreshToken:
