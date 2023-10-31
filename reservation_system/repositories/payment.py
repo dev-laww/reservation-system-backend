@@ -13,7 +13,10 @@ class PaymentRepository:
         :param payment_id: payment id.
         :return: Payment.
         """
-        return await self.prisma_client.payment.find_unique(where={"id": payment_id})
+        return await self.prisma_client.payment.find_unique(
+            where={"id": payment_id},
+            include={"booking": True},
+        )
 
     async def get_all(self) -> list[models.Payment]:
         """
