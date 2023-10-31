@@ -1,7 +1,7 @@
 import requests
 from fastapi import HTTPException, UploadFile, status
 
-from ..repositories import PropertyRepository
+from ..repositories import PropertyRepository, NotificationRepository
 from ..schemas.property import Booking, Property, Review
 from ..schemas.query_params import PropertyQuery
 from ..schemas.request import (
@@ -18,6 +18,7 @@ from ..utils.response import Response
 
 class PropertiesController:
     repo = PropertyRepository()
+    notif_repo = NotificationRepository()
 
     async def get_property(self, property_id: int):
         """
@@ -261,6 +262,51 @@ class PropertiesController:
             data=Booking(**booking.model_dump()).model_dump(),
         )
 
+    async def accept_booking(self, booking_id: int):
+        """Accept data booking.
+
+        :param booking_id: booking id.
+        :return: Property bookings.
+        """
+
+        booking = await self.repo.get_booking_by_id(booking_id=booking_id)
+
+        if not booking:
+            raise Response.not_found(message="Booking not found")
+
+        await self.repo.delete_booking(booking_id=booking_id)
+        await self.repo.add_tenant(
+            property_id=booking.property_id, user_id=booking.user_id
+        )
+        await self.notif_repo.create(
+            user_id=booking.user_id,
+            message=f"Your booking for {booking.property.name} has been accepted",
+            created_by="SYSTEM",
+        )
+
+        return Response.ok(message="Booking accepted")
+
+    async def decline_booking(self, booking_id: int):
+        """Decline data booking.
+
+        :param booking_id: booking id.
+        :return: Property bookings.
+        """
+
+        booking = await self.repo.get_booking_by_id(booking_id=booking_id)
+
+        if not booking:
+            raise Response.not_found(message="Booking not found")
+
+        await self.repo.delete_booking(booking_id=booking_id)
+        await self.notif_repo.create(
+            user_id=booking.user_id,
+            message=f"Your booking for {booking.property.name} has been declined",
+            created_by="SYSTEM",
+        )
+
+        return Response.ok(message="Booking declined")
+
     async def get_tenants(self, property_id: int):
         """
         Get data tenants.
@@ -376,7 +422,7 @@ class PropertiesController:
     async def remove_image(self, property_id: int, image_id: int):
         """
         Remove property image.
-    
+
         :param property_id: data id.
         :param image_id: image id.
         """

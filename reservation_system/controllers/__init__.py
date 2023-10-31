@@ -9,3 +9,4 @@ from .profile import ProfileController
 from .properties import PropertiesController
 from .tenants import TenantsController
 from .payments import PaymentsController
+from .notifications import NotificationController

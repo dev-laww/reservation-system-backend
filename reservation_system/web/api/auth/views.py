@@ -19,12 +19,8 @@ async def login(data: request.LoginUser):
 
 
 @router.post("/refresh")
-async def refresh_token(
-    refresh: request.RefreshToken
-):
-    return await controller.refresh_token(
-        refresh_token=refresh.refresh_token
-    )
+async def refresh_token(refresh: request.RefreshToken):
+    return await controller.refresh_token(refresh_token=refresh.refresh_token)
 
 
 @router.post("/forgot-password")

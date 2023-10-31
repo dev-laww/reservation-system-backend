@@ -19,9 +19,9 @@ class NotificationRepository:
 
     async def create(
         self,
-        user_id: int,
         message: str,
         created_by: str,
+        user_id: int = None,
     ) -> models.Notification:
         """
         Create notification.
@@ -61,4 +61,23 @@ class NotificationRepository:
         """
         return await self.prisma_client.notification.delete(
             where={"id": notification_id},
+        )
+
+    async def notify_all(
+        self,
+        message: str,
+        created_by: str,
+    ):
+        """Notify all users.
+
+        :param message: notification message.
+        :param created_by: notification creator.
+        :return: Notification.
+        """
+
+        await self.prisma_client.notification.create(
+            data={
+                "message": message,
+                "created_by": created_by,
+            },
         )

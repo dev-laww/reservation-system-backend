@@ -130,7 +130,16 @@ class UserRepository:
         :return: list of notifications.
         """
         return await self.prisma_client.notification.find_many(
-            where={"user_id": user_id},
+            where={
+                "OR": [
+                    {
+                        "user_id": user_id,
+                    },
+                    {
+                        "user_id": None,
+                    },
+                ]
+            },
         )
 
     async def read_notification(

@@ -26,5 +26,12 @@
     "message": "Hello World",
     "created_by": "admin",
     "seen": true
+  },
+  {
+    "id": 5,
+    "user_id": null,
+    "message": "Hello World Global Notification",
+    "created_by": "admin",
+    "seen": false
   }
 ]

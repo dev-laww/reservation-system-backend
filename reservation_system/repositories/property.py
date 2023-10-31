@@ -51,7 +51,12 @@ class PropertyRepository:
         if filters.keyword:
             where["name"] = {"contains": filters.keyword}
 
-        if filters.type and filters.type in ("one_bedroom", "two_bedroom", "studio", "house"):
+        if filters.type and filters.type in (
+            "one_bedroom",
+            "two_bedroom",
+            "studio",
+            "house",
+        ):
             where["type"] = filters.type
 
         if filters.min_price or filters.max_price or filters.price:
@@ -187,7 +192,7 @@ class PropertyRepository:
     async def get_image(self, property_id: int, image_id: int) -> models.Image:
         """
         Get property image.
-        
+
         :param property_id: property id.
         :param image_id: image id.
         """
@@ -219,7 +224,6 @@ class PropertyRepository:
             },
         )
 
-    
     async def remove_image(self, image_id: int) -> models.Property:
         """
         Remove property image.
@@ -227,9 +231,7 @@ class PropertyRepository:
         :param image_id: image id.
         :return: Property.
         """
-        return await self.prisma_client.image.delete(
-            where={"id": image_id}
-        )
+        return await self.prisma_client.image.delete(where={"id": image_id})
 
     async def get_reviews(self, property_id: int) -> list[models.Review]:
         """
@@ -326,8 +328,41 @@ class PropertyRepository:
         """
 
         return await self.prisma_client.booking.find_first(
-            where={"property_id": property_id, "user_id": user_id}
+            where={
+                "property_id": property_id,
+                "user_id": user_id,
+            },
+            include={
+                "property": True,
+                "user": True,
+            },
         )
+
+    async def get_booking_by_id(self, booking_id: int) -> models.Booking:
+        """
+        Get property booking.
+
+        :param property_id: property id.
+        :param user_id: user id.
+        :return: Booking.
+        """
+
+        return await self.prisma_client.booking.find_first(
+            where={"id": booking_id},
+            include={
+                "property": True,
+                "user": True,
+            },
+        )
+
+    async def delete_booking(self, booking_id: int) -> models.Booking:
+        """
+        Delete a property booking.
+
+        :param booking_id: booking id.
+        :returns: Booking.
+        """
+        return await self.prisma_client.booking.delete(where={"id": booking_id})
 
     async def get_tenants(self, property_id: int) -> list[models.User]:
         """

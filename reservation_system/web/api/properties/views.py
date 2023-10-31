@@ -93,6 +93,21 @@ async def create_booking(property_id: int, data: BookingCreate, user=Depends(AUT
     )
 
 
+@router.post("/bookings/{booking_id}/accept", dependencies=[Depends(ADMIN_AUTH)])
+async def accept_booking(property_id: int, booking_id: int):
+    return await controller.accept_booking(
+        property_id=property_id,
+        booking_id=booking_id,
+    )
+
+
+@router.post("/bookings/{booking_id}/decline", dependencies=[Depends(ADMIN_AUTH)])
+async def decline_booking(booking_id: int):
+    return await controller.decline_booking(
+        booking_id=booking_id,
+    )
+
+
 @router.get("/{property_id}/tenants")
 async def get_tenants(property_id: int):
     return await controller.get_tenants(property_id=property_id)

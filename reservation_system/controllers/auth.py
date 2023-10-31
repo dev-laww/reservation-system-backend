@@ -92,8 +92,12 @@ class AuthController:
         if not token:
             raise Response.unauthorized(message="Invalid refresh token")
 
-        session = {"id": token.user.id, "email": token.user.email, "isAdmin": token.user.admin}
-        refresh_token =  encode_token(session, expire_days=30)
+        session = {
+            "id": token.user.id,
+            "email": token.user.email,
+            "isAdmin": token.user.admin,
+        }
+        refresh_token = encode_token(session, expire_days=30)
 
         data = {
             "access_token": encode_token(
