@@ -43,13 +43,19 @@ class PropertyRepository:
         """
 
         order = None
-        where = None
+        where = {}
 
         if filters.sort and filters.order:
             order = {filters.sort: filters.order}
 
+        if filters.keyword:
+            where["name"] = {"contains": filters.keyword}
+
+        if filters.type and filters.type in ("one_bedroom", "two_bedroom", "studio", "house"):
+            where["type"] = filters.type
+
         if filters.min_price or filters.max_price or filters.price:
-            where = {"price": {}}
+            where["price"] = {}
 
             if filters.min_price:
                 where["price"]["gte"] = filters.min_price
@@ -61,7 +67,7 @@ class PropertyRepository:
                 where["price"] = filters.price
 
         if filters.min_occupancy or filters.max_occupancy or filters.occupancy:
-            where = {"max_occupancy": {}}
+            where["max_occupancy"] = {}
 
             if filters.min_occupancy:
                 where["max_occupancy"]["gte"] = filters.min_occupancy
@@ -77,7 +83,8 @@ class PropertyRepository:
                 "price",
                 "max_occupancy",
                 "current_occupant",
-                "created_at" "updated_at",
+                "created_at",
+                "updated_at",
             ):
                 order = {filters.sort: filters.order}
 

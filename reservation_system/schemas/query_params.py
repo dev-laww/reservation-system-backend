@@ -10,6 +10,7 @@ class CommonQuery(BaseModel):
 
 
 class PropertyQuery(CommonQuery):
+    keyword: Optional[str] = Query(default=None)
     min_price: int = Query(default=0, ge=0)
     max_price: Optional[int] = Query(default=None, ge=0)
     price: Optional[int] = Query(default=None, ge=0)
@@ -17,4 +18,5 @@ class PropertyQuery(CommonQuery):
     max_occupancy: Optional[int] = Query(default=None, ge=0)
     occupancy: Optional[int] = Query(default=None, ge=0)
     sort: Optional[str] = Query(default=None)
+    type: Optional[str] = Query(default=None)
     order: Optional[str] = Query(default=None, regex="^(asc|desc)$")

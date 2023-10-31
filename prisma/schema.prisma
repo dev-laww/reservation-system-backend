@@ -40,7 +40,7 @@ model Property {
   price            Float
   name             String
   description      String
-  type             String
+  type             PropertyType
   address          String
   city             String
   state            String
@@ -166,4 +166,11 @@ enum Status {
   pending
   paid
   declined
+}
+
+enum PropertyType {
+  house
+  studio
+  one_bedroom
+  two_bedroom
 }
