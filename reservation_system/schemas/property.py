@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from ..utils.base_schema import CamelBaseModel
+from .user import User
 
 
 class PropertyImage(CamelBaseModel):
@@ -35,6 +36,7 @@ class Property(CamelBaseModel):
     updated_at: datetime
     images: list[PropertyImage]
     reviews: list[Review]
+    tenants: list[User]
 
 
 class Booking(CamelBaseModel):

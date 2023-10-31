@@ -10,4 +10,4 @@ class User(CamelBaseModel):
 
 
 class Tenant(User):
-    property_id: int
+    property: dict

@@ -190,6 +190,7 @@ class UserRepository:
         """
         return await self.prisma_client.user.find_many(
             where={"property_id": {"not": None}},
+            include={"property": True},
         )
 
     async def get_tenant(self, user_id: int) -> models.User | None:
