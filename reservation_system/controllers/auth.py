@@ -1,6 +1,7 @@
 import asyncio
 import random
 import string
+from datetime import datetime, timedelta
 
 from ..repositories import UserRepository
 from ..schemas.request import ForgotPassowrd, PasswordReset, RegisterUser
@@ -60,11 +61,18 @@ class AuthController:
 
         session = {"id": user.id, "email": user.email, "isAdmin": user.admin}
 
+        refresh_token = encode_token(session, expire_days=30)
         data = {
-            **user.model_dump(exclude=("password",)),
+            **user.model_dump(),
             "access_token": encode_token(session, expire_days=1),
-            "refresh_token": encode_token(session, expire_days=30),
+            "refresh_token": refresh_token,
         }
+
+        await self.repo.create_refresh_token(
+            user_id=user.id,
+            token=refresh_token,
+            expires_at=datetime.now() + timedelta(days=30),
+        )
 
         return Token(
             status="success",
@@ -72,25 +80,35 @@ class AuthController:
             **data,
         )
 
-    async def refresh_token(self, user_id: int, refresh_token: str):
+    async def refresh_token(self, refresh_token: str):
         """
         Refresh an access token.
 
         :param refresh_token: refresh token.
         :return: new access token.
         """
-        token = await self.repo.get_refresh_token(user_id=user_id)
+        token = await self.repo.get_refresh_token(refresh_token)
 
-        if token != refresh_token:
-            raise Response.bad_request(message="Invalid refresh token")
+        if not token:
+            raise Response.unauthorized(message="Invalid refresh token")
 
-        user = await self.repo.get_by_id(user_id=user_id)
+        session = {"id": token.user.id, "email": token.user.email, "isAdmin": token.user.admin}
+        refresh_token =  encode_token(session, expire_days=30)
+
         data = {
             "access_token": encode_token(
-                {"id": user.id, "email": user.email, "isAdmin": user.admin},
+                session,
                 expire_days=1,
             ),
+            "refresh_token": refresh_token,
+            **token.user.model_dump(),
         }
+
+        await self.repo.create_refresh_token(
+            user_id=token.user.id,
+            token=refresh_token,
+            expires_at=datetime.now() + timedelta(days=30),
+        )
 
         return Token(
             status="success",
