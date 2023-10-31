@@ -15,7 +15,8 @@
     "email": "alice.smith@example.com",
     "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
     "phone_number": "081234567890",
-    "admin": false
+    "admin": false,
+    "property_id": 1
   },
   {
     "id": 3,
@@ -24,7 +25,8 @@
     "email": "emma.brown@example.com",
     "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
     "phone_number": "081234567890",
-    "admin": false
+    "admin": false,
+    "property_id": 2
   },
   {
     "id": 4,
@@ -33,7 +35,8 @@
     "email": "michael.davis@example.com",
     "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
     "phone_number": "081234567890",
-    "admin": false
+    "admin": false,
+    "property_id": 3
   },
   {
     "id": 5,
@@ -42,7 +45,8 @@
     "email": "sophia.garcia@example.com",
     "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
     "phone_number": "081234567890",
-    "admin": false
+    "admin": false,
+    "property_id": 4
   },
   {
     "id": 6,
@@ -51,7 +55,8 @@
     "email": "james.wilson@example.com",
     "password": "$2a$10$FyDL9cB8vaD9U/XF4Q81A.m2W26BHjT/fXkjw1xQtgKQ4z6dH7/Zu",
     "phone_number": "081234567890",
-    "admin": false
+    "admin": false,
+    "property_id": 5
   },
   {
     "id": 7,

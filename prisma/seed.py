@@ -10,8 +10,8 @@ from prisma import Prisma
 load_dotenv()
 
 seeding_order = [
-    'user',
     'property',
+    'user',
     'image',
     'notification',
     'booking',
