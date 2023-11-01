@@ -89,7 +89,7 @@ CREATE TABLE "bookings" (
 -- CreateTable
 CREATE TABLE "notifications" (
     "id" SERIAL NOT NULL,
-    "user_id" INTEGER,
+    "user_id" INTEGER NOT NULL,
     "message" TEXT NOT NULL,
     "seen" BOOLEAN NOT NULL DEFAULT false,
     "created_by" TEXT NOT NULL,

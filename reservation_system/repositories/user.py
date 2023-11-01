@@ -176,8 +176,10 @@ class UserRepository:
         :return: list of notifications.
         """
         return await self.prisma_client.notification.update_many(
-            where={"user_id": user_id},
             data={"seen": True},
+            where={
+                "user_id": user_id,
+            },
         )
 
     async def get_property(self, user_id: int) -> models.Property | None:

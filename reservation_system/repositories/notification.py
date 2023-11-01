@@ -75,9 +75,11 @@ class NotificationRepository:
         :return: Notification.
         """
 
-        await self.prisma_client.notification.create(
-            data={
-                "message": message,
-                "created_by": created_by,
-            },
-        )
+        users = await self.prisma_client.user.find_many()
+
+        for user in users:
+            await self.create(
+                message=message,
+                created_by=created_by,
+                user_id=user.id
+            )

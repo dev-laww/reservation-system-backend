@@ -98,7 +98,7 @@ model Booking {
 
 model Notification {
   id         Int      @id @default(autoincrement())
-  user_id    Int?
+  user_id    Int
   message    String
   seen       Boolean  @default(false)
   created_by String
