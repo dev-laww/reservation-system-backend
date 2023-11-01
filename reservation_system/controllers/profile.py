@@ -115,6 +115,7 @@ class ProfileController:
         :return: User notifications.
         """
 
+        await self.repo.read_all_notifications(user_id=user_id)
         return Response.ok(
             message="Notifications marked as read",
         )
