@@ -15,7 +15,14 @@ class PaymentRepository:
         """
         return await self.prisma_client.payment.find_unique(
             where={"id": payment_id},
-            include={"booking": True},
+            include={
+                "booking": {
+                    "include": {
+                        "property": True
+                    }
+                },
+                "user": True
+            }
         )
 
     async def get_all(self) -> list[models.Payment]:
@@ -24,7 +31,16 @@ class PaymentRepository:
 
         :return: list of payments.
         """
-        return await self.prisma_client.payment.find_many()
+        return await self.prisma_client.payment.find_many(
+            include={
+                "booking": {
+                    "include": {
+                        "property": True
+                    }
+                },
+                "user": True
+            }
+        )
 
     async def create(self, **data) -> models.Payment:
         """
@@ -46,6 +62,14 @@ class PaymentRepository:
         return await self.prisma_client.payment.update(
             where={"id": payment_id},
             data=kwargs,
+            include={
+                "booking": {
+                    "include": {
+                        "property": True
+                    }
+                },
+                "user": True
+            }
         )
 
     async def delete(self, payment_id: int) -> models.Payment:
@@ -67,6 +91,14 @@ class PaymentRepository:
         return await self.prisma_client.payment.update(
             where={"id": payment_id},
             data={"status": "PAID"},
+            include={
+                "booking": {
+                    "include": {
+                        "property": True
+                    }
+                },
+                "user": True
+            }
         )
 
     async def mark_declined(self, payment_id: int) -> models.Payment:
@@ -79,4 +111,12 @@ class PaymentRepository:
         return await self.prisma_client.payment.update(
             where={"id": payment_id},
             data={"status": "DECLINED"},
+            include={
+                "booking": {
+                    "include": {
+                        "property": True
+                    }
+                },
+                "user": True
+            }
         )
