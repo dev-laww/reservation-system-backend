@@ -1,3 +1,5 @@
+from typing import Optional
+
 from ..utils.base_schema import CamelBaseModel
 
 
@@ -10,4 +12,4 @@ class User(CamelBaseModel):
 
 
 class Tenant(User):
-    property: dict
+    property: Optional[dict]
