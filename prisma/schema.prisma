@@ -34,22 +34,22 @@ model User {
 }
 
 model Property {
-  id               Int       @id @default(autoincrement())
-  price            Float
-  name             String
-  description      String
-  type             PropertyType
-  address          String
-  city             String
-  state            String
-  zip              String
-  created_at       DateTime  @default(now())
-  updated_at       DateTime  @updatedAt
-  rentals          Rental[]
-  reviews          Review[]
-  images           Image[]
-  tenant_id        Int?      @unique
-  tenant           User?     @relation(fields: [tenant_id], references: [id], onDelete: SetNull)
+  id          Int          @id @default(autoincrement())
+  price       Float
+  name        String
+  description String
+  type        PropertyType
+  address     String
+  city        String
+  state       String
+  zip         String
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  rentals     Rental[]
+  reviews     Review[]
+  images      Image[]
+  tenant_id   Int?         @unique
+  tenant      User?        @relation(fields: [tenant_id], references: [id], onDelete: SetNull)
 
   @@map("properties")
 }
@@ -80,16 +80,16 @@ model Review {
 }
 
 model Rental {
-  id          Int           @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   user_id     Int
   property_id Int
   start_date  DateTime
   end_date    DateTime
   status      RentalStatus @default(pending)
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
-  user        User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  property    Property      @relation(fields: [property_id], references: [id], onDelete: Cascade)
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  user        User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  property    Property     @relation(fields: [property_id], references: [id], onDelete: Cascade)
   payment     Payment?
 
   @@map("rentals")
@@ -103,7 +103,7 @@ model Notification {
   created_by String
   created_at DateTime @default(now())
   seen_at    DateTime @updatedAt
-  user       User?     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user       User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }
@@ -111,14 +111,14 @@ model Notification {
 model Payment {
   id         Int         @id @default(autoincrement())
   user_id    Int
-  rental_id Int         @unique
+  rental_id  Int         @unique
   type       PaymentType @default(cash)
   amount     Float
   status     Status      @default(pending)
   created_at DateTime    @default(now())
   updated_at DateTime    @updatedAt
   user       User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  rental     Rental     @relation(fields: [rental_id], references: [id], onDelete: Cascade)
+  rental     Rental      @relation(fields: [rental_id], references: [id], onDelete: Cascade)
 
   @@map("payments")
 }

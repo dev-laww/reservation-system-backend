@@ -16,7 +16,12 @@ class PropertyRepository:
         """
         return await self.prisma_client.property.find_unique(
             where={"id": property_id},
-            include={"images": True, "reviews": True, "tenants": True},
+            include={
+                "images": True,
+                "reviews": {
+                    "include": {"user": True}
+                }
+            },
         )
 
     async def get_by_name(self, name: str) -> models.Property:
@@ -193,7 +198,10 @@ class PropertyRepository:
         :return: list of reviews.
         """
         return await self.prisma_client.review.find_many(
-            where={"property_id": property_id}
+            where={"property_id": property_id},
+            include={
+                "user": True,
+            },
         )
 
     async def get_review(self, review_id: int) -> models.Review:
@@ -203,7 +211,12 @@ class PropertyRepository:
         :param review_id: review id.
         :return: Review.
         """
-        return await self.prisma_client.review.find_first(where={"id": review_id})
+        return await self.prisma_client.review.find_first(
+            where={"id": review_id},
+            include={
+                "user": True,
+            },
+        )
 
     async def create_review(self, property_id: int, **data) -> models.Review:
         """
