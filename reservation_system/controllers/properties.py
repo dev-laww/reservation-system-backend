@@ -5,7 +5,7 @@ from ..repositories import PropertyRepository, NotificationRepository
 from ..schemas.property import Rental, Property, Review
 from ..schemas.query_params import PropertyQuery
 from ..schemas.request import (
-    BookingCreate,
+    RentalCreate,
     PropertyCreate,
     PropertyUpdate,
     ReviewCreate,
@@ -34,7 +34,7 @@ class PropertiesController:
 
         property_data = {
             **data.model_dump(),
-            "current_occupant": len(data.tenants),
+            "occupied": bool(data.tenant),
         }
 
         return Response.ok(
@@ -56,7 +56,7 @@ class PropertiesController:
                 Property(
                     **{
                         **data.model_dump(),
-                        "current_occupant": len(data.tenants),
+                        "occupied": bool(data.tenant),
                     }
                 ).model_dump()
                 for data in properties
@@ -209,7 +209,7 @@ class PropertiesController:
             data=Review(**review.model_dump()).model_dump(),
         )
 
-    async def get_bookings(self, property_id: int):
+    async def get_rentals(self, property_id: int):
         """
         Get data rentals.
 
@@ -221,14 +221,14 @@ class PropertiesController:
         if not data:
             raise Response.not_found(message="Property not found")
 
-        rentals = await self.repo.get_bookings(property_id=property_id)
+        rentals = await self.repo.get_rentals(property_id=property_id)
 
         return Response.ok(
             message="Property rentals retrieved",
             data=[Rental(**rental.model_dump()).model_dump() for rental in rentals],
         )
 
-    async def book_property(self, property_id: int, user_id: int, data: BookingCreate):
+    async def book_property(self, property_id: int, user_id: int, data: RentalCreate):
         """
         Book data.
 
@@ -242,18 +242,18 @@ class PropertiesController:
         if not prop:
             raise Response.not_found(message="Property not found")
 
-        if prop.current_occupant >= prop.max_occupancy:
-            raise Response.bad_request(message="Property is full")
+        if prop.tenant:
+            raise Response.bad_request(message="Property is taken")
 
-        booking_check = await self.repo.get_booking(
+        rental_check = await self.repo.get_rental(
             user_id=user_id,
             property_id=property_id,
         )
 
-        if booking_check:
+        if rental_check:
             raise Response.bad_request(message="You already have a rental")
 
-        rental = await self.repo.create_booking(
+        rental = await self.repo.create_rental(
             property_id=property_id, user_id=user_id, **data.model_dump()
         )
 
@@ -262,19 +262,19 @@ class PropertiesController:
             data=Rental(**rental.model_dump()).model_dump(),
         )
 
-    async def accept_booking(self, booking_id: int):
+    async def accept_rental(self, rental_id: int):
         """Accept data rental.
 
-        :param booking_id: rental id.
+        :param rental_id: rental id.
         :return: Property rentals.
         """
 
-        rental = await self.repo.get_booking_by_id(booking_id=booking_id)
+        rental = await self.repo.get_rental_by_id(rental_id=rental_id)
 
         if not rental:
             raise Response.not_found(message="Rental not found")
 
-        await self.repo.delete_booking(booking_id=booking_id)
+        await self.repo.delete_rental(rental_id=rental_id)
         await self.repo.add_tenant(
             property_id=rental.property_id, user_id=rental.user_id
         )
@@ -286,19 +286,19 @@ class PropertiesController:
 
         return Response.ok(message="Rental accepted")
 
-    async def decline_booking(self, booking_id: int):
+    async def decline_rental(self, rental_id: int):
         """Decline data rental.
 
-        :param booking_id: rental id.
+        :param rental_id: rental id.
         :return: Property rentals.
         """
 
-        rental = await self.repo.get_booking_by_id(booking_id=booking_id)
+        rental = await self.repo.get_rental_by_id(rental_id=rental_id)
 
         if not rental:
             raise Response.not_found(message="Rental not found")
 
-        await self.repo.delete_booking(booking_id=booking_id)
+        await self.repo.delete_rental(rental_id=rental_id)
         await self.notif_repo.create(
             user_id=rental.user_id,
             message=f"Your rental for {rental.property.name} has been declined",
@@ -355,8 +355,6 @@ class PropertiesController:
         if not tenant:
             raise Response.bad_request(message="User not found")
 
-        await self.repo.increment_occupants(property_id=property_id)
-
         return Response.ok(message="Tenant added")
 
     async def remove_tenant(self, property_id: int, tenant_id: int):
@@ -381,7 +379,6 @@ class PropertiesController:
             raise Response.bad_request(message="User is not a tenant")
 
         await self.repo.remove_tenant(property_id=property_id, user_id=tenant_id)
-        await self.repo.decrement_occupants(property_id=property_id)
 
         return Response.ok(
             message="Tenant removed",

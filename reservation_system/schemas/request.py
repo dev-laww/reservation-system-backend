@@ -57,7 +57,6 @@ class PropertyCreate(CamelBaseModel):
     zip: str
     type: str
     price: int
-    max_occupancy: int
 
 
 class PropertyUpdate(CamelBaseModel):
@@ -69,7 +68,6 @@ class PropertyUpdate(CamelBaseModel):
     zip: str = ""
     type: str = ""
     price: int = 0
-    max_occupancy: int = 0
 
 
 class ReviewCreate(CamelBaseModel):
@@ -82,7 +80,7 @@ class ReviewUpdate(CamelBaseModel):
     comment: str = None
 
 
-class BookingCreate(CamelBaseModel):
+class RentalCreate(CamelBaseModel):
     start_date: datetime
     end_date: datetime
 

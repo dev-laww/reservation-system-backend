@@ -131,7 +131,7 @@ class ProfileController:
         rentals = await self.repo.get_rentals(user_id=user_id)
 
         return Response.ok(
-            message="Bookings retrieved",
+            message="Rentals retrieved",
             data=[rental.model_dump() for rental in rentals],
         )
 

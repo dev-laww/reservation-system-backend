@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from ..utils.base_schema import CamelBaseModel
 from .user import User
@@ -31,12 +32,12 @@ class Property(CamelBaseModel):
     city: str
     state: str
     zip: str
-    current_occupant: int
+    occupied: bool
     created_at: datetime
     updated_at: datetime
     images: list[PropertyImage]
     reviews: list[Review]
-    tenants: list[User]
+    tenant: Optional[User]
 
 
 class Rental(CamelBaseModel):

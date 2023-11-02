@@ -68,7 +68,7 @@ class UserRepository:
         """
         return await self.prisma_client.review.find_many(where={"user_id": user_id})
 
-    async def get_bookings(self, user_id: int) -> list[models.Rental]:
+    async def get_rentals(self, user_id: int) -> list[models.Rental]:
         """
         Get user rentals.
 
@@ -77,29 +77,29 @@ class UserRepository:
         """
         return await self.prisma_client.rental.find_many(where={"user_id": user_id})
 
-    async def get_booking(self, user_id: int, booking_id: int) -> models.Rental:
+    async def get_rental(self, user_id: int, rental_id: int) -> models.Rental:
         """
         Get user rental.
 
         :param user_id: user id.
-        :param booking_id: rental id.
+        :param rental_id: rental id.
         :return: Rental.
         """
         return await self.prisma_client.rental.find_first(
-            where={"id": booking_id, "user_id": user_id},
+            where={"id": rental_id, "user_id": user_id},
         )
 
-    async def cancel_booking(self, user_id: int, booking_id: int) -> models.Rental:
+    async def cancel_rental(self, user_id: int, rental_id: int) -> models.Rental:
         """
         Cancel user rental.
 
         :param user_id: user id.
-        :param booking_id: rental id.
+        :param rental_id: rental id.
         :return: Rental.
         """
         if not await self.prisma_client.rental.find_first(
             where={
-                "id": booking_id,
+                "id": rental_id,
                 "user_id": user_id,
             },
         ):
@@ -107,10 +107,10 @@ class UserRepository:
 
         return await self.prisma_client.rental.update(
             where={
-                "id": booking_id,
+                "id": rental_id,
                 "user_id": user_id,
             },
-            data={"status": enums.BookingStatus.canceled},
+            data={"status": enums.RentalStatus.canceled},
         )
 
     async def get_payments(self, user_id: int) -> list[models.Payment]:

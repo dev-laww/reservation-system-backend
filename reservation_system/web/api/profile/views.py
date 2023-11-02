@@ -43,15 +43,15 @@ async def mark_all_notifications_as_read(user: JWTData = Depends(AUTH)):
 
 
 @router.get("/rentals")
-async def get_bookings(user: JWTData = Depends(AUTH)):
-    return await controller.get_bookings(user_id=user.id)
+async def get_rentals(user: JWTData = Depends(AUTH)):
+    return await controller.get_rentals(user_id=user.id)
 
 
-@router.get("/rentals/{booking_id}")
-async def get_booking(booking_id: int, user: JWTData = Depends(AUTH)):
-    return await controller.get_booking(booking_id=booking_id, user_id=user.id)
+@router.get("/rentals/{rental_id}")
+async def get_rental(rental_id: int, user: JWTData = Depends(AUTH)):
+    return await controller.get_rental(rental_id=rental_id, user_id=user.id)
 
 
 @router.post("/rentals/cancel")
-async def cancel_booking(booking_id: int, user: JWTData = Depends(AUTH)):
-    return await controller.cancel_booking(booking_id=booking_id, user_id=user.id)
+async def cancel_rental(rental_id: int, user: JWTData = Depends(AUTH)):
+    return await controller.cancel_rental(rental_id=rental_id, user_id=user.id)

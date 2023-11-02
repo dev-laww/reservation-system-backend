@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, UploadFile
 from ....controllers import PropertiesController
 from ....schemas.query_params import PropertyQuery
 from ....schemas.request import (
-    BookingCreate,
+    RentalCreate,
     PropertyCreate,
     PropertyUpdate,
     ReviewCreate,
@@ -80,12 +80,12 @@ async def update_review(
 
 
 @router.get("/{property_id}/rentals")
-async def get_bookings(property_id: int):
-    return await controller.get_bookings(property_id=property_id)
+async def get_rentals(property_id: int):
+    return await controller.get_rentals(property_id=property_id)
 
 
 @router.post("/{property_id}/rentals")
-async def create_booking(property_id: int, data: BookingCreate, user=Depends(AUTH)):
+async def create_rental(property_id: int, data: RentalCreate, user=Depends(AUTH)):
     return await controller.book_property(
         property_id=property_id,
         user_id=user.id,
@@ -93,18 +93,17 @@ async def create_booking(property_id: int, data: BookingCreate, user=Depends(AUT
     )
 
 
-@router.post("/rentals/{booking_id}/accept", dependencies=[Depends(ADMIN_AUTH)])
-async def accept_booking(property_id: int, booking_id: int):
-    return await controller.accept_booking(
-        property_id=property_id,
-        booking_id=booking_id,
+@router.post("/rentals/{rental_id}/accept", dependencies=[Depends(ADMIN_AUTH)])
+async def accept_rental(property_id: int, rental_id: int):
+    return await controller.accept_rental(
+        rental_id=rental_id,
     )
 
 
-@router.post("/rentals/{booking_id}/decline", dependencies=[Depends(ADMIN_AUTH)])
-async def decline_booking(booking_id: int):
-    return await controller.decline_booking(
-        booking_id=booking_id,
+@router.post("/rentals/{rental_id}/decline", dependencies=[Depends(ADMIN_AUTH)])
+async def decline_rental(rental_id: int):
+    return await controller.decline_rental(
+        rental_id=rental_id,
     )
 
 
