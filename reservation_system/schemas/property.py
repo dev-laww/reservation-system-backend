@@ -20,6 +20,7 @@ class Review(CamelBaseModel):
     comment: str
     created_at: datetime
     updated_at: datetime
+    user: Optional[User]
 
 
 class Property(CamelBaseModel):
