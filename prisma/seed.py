@@ -14,7 +14,7 @@ seeding_order = [
     'user',
     'image',
     'notification',
-    'booking',
+    'rental',
     'payment',
     'review'
 ]

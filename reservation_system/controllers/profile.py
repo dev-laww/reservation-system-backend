@@ -120,55 +120,55 @@ class ProfileController:
             message="Notifications marked as read",
         )
 
-    async def get_bookings(self, user_id: int):
+    async def get_rentals(self, user_id: int):
         """
-        Get user bookings.
+        Get user rentals.
 
         :param user_id: user id.
-        :return: User bookings.
+        :return: User rentals.
         """
 
-        bookings = await self.repo.get_bookings(user_id=user_id)
+        rentals = await self.repo.get_rentals(user_id=user_id)
 
         return Response.ok(
             message="Bookings retrieved",
-            data=[booking.model_dump() for booking in bookings],
+            data=[rental.model_dump() for rental in rentals],
         )
 
-    async def get_booking(self, user_id: int, booking_id: int):
+    async def get_rental(self, user_id: int, rental_id: int):
         """
-        Get user booking.
+        Get user rental.
 
         :param user_id: user id.
-        :param booking_id: booking id.
-        :return: User booking.
+        :param rental_id: rental id.
+        :return: User rental.
         """
 
-        booking = await self.repo.get_booking(user_id=user_id, booking_id=booking_id)
+        rental = await self.repo.get_rental(user_id=user_id, rental_id=rental_id)
 
-        if not booking:
-            raise Response.not_found(message="Booking not found")
+        if not rental:
+            raise Response.not_found(message="Rental not found")
 
         return Response.ok(
-            message="Booking retrieved",
-            data=booking.model_dump(),
+            message="Rental retrieved",
+            data=rental.model_dump(),
         )
 
-    async def cancel_booking(self, user_id: int, booking_id: int):
+    async def cancel_rental(self, user_id: int, rental_id: int):
         """
-        Cancel user booking.
+        Cancel user rental.
 
         :param user_id: user id.
-        :param booking_id: booking id.
-        :return: User booking.
+        :param rental_id: rental id.
+        :return: User rental.
         """
 
-        booking = await self.repo.cancel_booking(user_id=user_id, booking_id=booking_id)
+        rental = await self.repo.cancel_rental(user_id=user_id, rental_id=rental_id)
 
-        if not booking:
-            raise Response.not_found(message="Booking not found")
+        if not rental:
+            raise Response.not_found(message="Rental not found")
 
         return Response.ok(
-            message="Booking cancelled",
-            data=booking.model_dump(),
+            message="Rental cancelled",
+            data=rental.model_dump(),
         )

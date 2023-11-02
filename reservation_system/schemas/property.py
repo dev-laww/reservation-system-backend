@@ -39,7 +39,7 @@ class Property(CamelBaseModel):
     tenants: list[User]
 
 
-class Booking(CamelBaseModel):
+class Rental(CamelBaseModel):
     id: int
     user_id: int
     property_id: int

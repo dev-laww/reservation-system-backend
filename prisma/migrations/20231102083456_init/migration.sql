@@ -5,7 +5,7 @@ CREATE TYPE "TokenType" AS ENUM ('reset');
 CREATE TYPE "PaymentType" AS ENUM ('cash', 'ewallet');
 
 -- CreateEnum
-CREATE TYPE "BookingStatus" AS ENUM ('pending', 'approved', 'declined', 'canceled');
+CREATE TYPE "RentalStatus" AS ENUM ('pending', 'approved', 'declined', 'canceled');
 
 -- CreateEnum
 CREATE TYPE "Status" AS ENUM ('pending', 'paid', 'declined');
@@ -32,8 +32,6 @@ CREATE TABLE "users" (
 -- CreateTable
 CREATE TABLE "properties" (
     "id" SERIAL NOT NULL,
-    "current_occupant" INTEGER NOT NULL DEFAULT 0,
-    "max_occupancy" INTEGER NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -44,6 +42,7 @@ CREATE TABLE "properties" (
     "zip" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "tenant_id" INTEGER,
 
     CONSTRAINT "properties_pkey" PRIMARY KEY ("id")
 );
@@ -73,17 +72,17 @@ CREATE TABLE "reviews" (
 );
 
 -- CreateTable
-CREATE TABLE "bookings" (
+CREATE TABLE "rentals" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
     "property_id" INTEGER NOT NULL,
     "start_date" TIMESTAMP(3) NOT NULL,
     "end_date" TIMESTAMP(3) NOT NULL,
-    "status" "BookingStatus" NOT NULL DEFAULT 'pending',
+    "status" "RentalStatus" NOT NULL DEFAULT 'pending',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "bookings_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "rentals_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -103,7 +102,7 @@ CREATE TABLE "notifications" (
 CREATE TABLE "payments" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
-    "booking_id" INTEGER NOT NULL,
+    "rental_id" INTEGER NOT NULL,
     "type" "PaymentType" NOT NULL DEFAULT 'cash',
     "amount" DOUBLE PRECISION NOT NULL,
     "status" "Status" NOT NULL DEFAULT 'pending',
@@ -139,7 +138,10 @@ CREATE TABLE "email_tokens" (
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "payments_booking_id_key" ON "payments"("booking_id");
+CREATE UNIQUE INDEX "properties_tenant_id_key" ON "properties"("tenant_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "payments_rental_id_key" ON "payments"("rental_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "access_tokens_token_key" ON "access_tokens"("token");
@@ -148,7 +150,7 @@ CREATE UNIQUE INDEX "access_tokens_token_key" ON "access_tokens"("token");
 CREATE UNIQUE INDEX "email_tokens_token_key" ON "email_tokens"("token");
 
 -- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "properties"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "properties" ADD CONSTRAINT "properties_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "images" ADD CONSTRAINT "images_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "properties"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -160,10 +162,10 @@ ALTER TABLE "reviews" ADD CONSTRAINT "reviews_user_id_fkey" FOREIGN KEY ("user_i
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "properties"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "bookings" ADD CONSTRAINT "bookings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "rentals" ADD CONSTRAINT "rentals_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "bookings" ADD CONSTRAINT "bookings_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "properties"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "rentals" ADD CONSTRAINT "rentals_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "properties"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -172,7 +174,7 @@ ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_fkey" FOREIGN 
 ALTER TABLE "payments" ADD CONSTRAINT "payments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "payments" ADD CONSTRAINT "payments_booking_id_fkey" FOREIGN KEY ("booking_id") REFERENCES "bookings"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "payments" ADD CONSTRAINT "payments_rental_id_fkey" FOREIGN KEY ("rental_id") REFERENCES "rentals"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "access_tokens" ADD CONSTRAINT "access_tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -16,7 +16,7 @@ class Notification(CamelBaseModel):
     created_at: datetime
 
 
-class Booking(CamelBaseModel):
+class Rental(CamelBaseModel):
     id: int
     user_id: int
     property_id: int

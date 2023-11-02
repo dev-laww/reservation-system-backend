@@ -1,8 +1,6 @@
 [
   {
     "id": 1,
-    "current_occupant": 1,
-    "max_occupancy": 2,
     "price": 1500,
     "name": "The Penthouse",
     "description": "This is the penthouse. It's really nice.",
@@ -14,8 +12,6 @@
   },
   {
     "id": 2,
-    "current_occupant": 3,
-    "max_occupancy": 3,
     "price": 3500,
     "name": "The Mansion",
     "description": "This is the mansion. It's really nice.",
@@ -27,8 +23,6 @@
   },
   {
     "id": 3,
-    "current_occupant": 0,
-    "max_occupancy": 1,
     "price": 1000,
     "name": "Whole House",
     "description": "This is the whole house. It's really nice.",
@@ -40,8 +34,6 @@
   },
   {
     "id": 4,
-    "current_occupant": 0,
-    "max_occupancy": 2,
     "price": 500,
     "name": "The Basement",
     "description": "This is the basement. It's really nice.",
@@ -53,8 +45,6 @@
   },
   {
     "id": 5,
-    "current_occupant": 0,
-    "max_occupancy": 2,
     "price": 500,
     "name": "The Attic",
     "description": "This is the attic. It's really nice.",

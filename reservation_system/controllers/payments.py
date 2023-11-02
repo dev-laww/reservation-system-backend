@@ -29,8 +29,8 @@ class PaymentsController:
 
         await self.__repo.update(payment_id=payment_id, status="paid")
         await self.__notification_repo.create(
-            message=f"Payment for {payment.booking.property.name} was marked as paid.",
-            user_id=payment.booking.user_id,
+            message=f"Payment for {payment.rental.property.name} was marked as paid.",
+            user_id=payment.rental.user_id,
             created_by="SYSTEM"
         )
         return Response.ok(message="Successfully marked payment as paid.")
@@ -43,8 +43,8 @@ class PaymentsController:
 
         await self.__repo.update(payment_id=payment_id, status="declined")
         await self.__notification_repo.create(
-            message=f"Payment for {payment.booking.property.name} was declined.",
-            user_id=payment.booking.user_id,
+            message=f"Payment for {payment.rental.property.name} was declined.",
+            user_id=payment.rental.user_id,
             created_by="SYSTEM"
         )
         return Response.ok(message="Successfully marked payment as declined.")

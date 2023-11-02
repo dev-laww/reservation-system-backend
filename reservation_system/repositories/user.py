@@ -68,36 +68,36 @@ class UserRepository:
         """
         return await self.prisma_client.review.find_many(where={"user_id": user_id})
 
-    async def get_bookings(self, user_id: int) -> list[models.Booking]:
+    async def get_bookings(self, user_id: int) -> list[models.Rental]:
         """
-        Get user bookings.
+        Get user rentals.
 
         :param user_id: user id.
-        :return: list of bookings.
+        :return: list of rentals.
         """
-        return await self.prisma_client.booking.find_many(where={"user_id": user_id})
+        return await self.prisma_client.rental.find_many(where={"user_id": user_id})
 
-    async def get_booking(self, user_id: int, booking_id: int) -> models.Booking:
+    async def get_booking(self, user_id: int, booking_id: int) -> models.Rental:
         """
-        Get user booking.
+        Get user rental.
 
         :param user_id: user id.
-        :param booking_id: booking id.
-        :return: Booking.
+        :param booking_id: rental id.
+        :return: Rental.
         """
-        return await self.prisma_client.booking.find_first(
+        return await self.prisma_client.rental.find_first(
             where={"id": booking_id, "user_id": user_id},
         )
 
-    async def cancel_booking(self, user_id: int, booking_id: int) -> models.Booking:
+    async def cancel_booking(self, user_id: int, booking_id: int) -> models.Rental:
         """
-        Cancel user booking.
+        Cancel user rental.
 
         :param user_id: user id.
-        :param booking_id: booking id.
-        :return: Booking.
+        :param booking_id: rental id.
+        :return: Rental.
         """
-        if not await self.prisma_client.booking.find_first(
+        if not await self.prisma_client.rental.find_first(
             where={
                 "id": booking_id,
                 "user_id": user_id,
@@ -105,7 +105,7 @@ class UserRepository:
         ):
             return
 
-        return await self.prisma_client.booking.update(
+        return await self.prisma_client.rental.update(
             where={
                 "id": booking_id,
                 "user_id": user_id,

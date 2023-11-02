@@ -79,12 +79,12 @@ async def update_review(
     )
 
 
-@router.get("/{property_id}/bookings")
+@router.get("/{property_id}/rentals")
 async def get_bookings(property_id: int):
     return await controller.get_bookings(property_id=property_id)
 
 
-@router.post("/{property_id}/bookings")
+@router.post("/{property_id}/rentals")
 async def create_booking(property_id: int, data: BookingCreate, user=Depends(AUTH)):
     return await controller.book_property(
         property_id=property_id,
@@ -93,7 +93,7 @@ async def create_booking(property_id: int, data: BookingCreate, user=Depends(AUT
     )
 
 
-@router.post("/bookings/{booking_id}/accept", dependencies=[Depends(ADMIN_AUTH)])
+@router.post("/rentals/{booking_id}/accept", dependencies=[Depends(ADMIN_AUTH)])
 async def accept_booking(property_id: int, booking_id: int):
     return await controller.accept_booking(
         property_id=property_id,
@@ -101,7 +101,7 @@ async def accept_booking(property_id: int, booking_id: int):
     )
 
 
-@router.post("/bookings/{booking_id}/decline", dependencies=[Depends(ADMIN_AUTH)])
+@router.post("/rentals/{booking_id}/decline", dependencies=[Depends(ADMIN_AUTH)])
 async def decline_booking(booking_id: int):
     return await controller.decline_booking(
         booking_id=booking_id,

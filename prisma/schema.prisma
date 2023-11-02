@@ -23,10 +23,10 @@ model User {
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   reviews       Review[]
-  bookings      Booking[]
+  rentals       Rental[]
   payments      Payment[]
   notifications Notification[]
-  property      Property?      @relation(fields: [property_id], references: [id], onDelete: SetNull)
+  property      Property?
   tokens        RefreshToken[]
   email_tokens  EmailToken[]
 
@@ -35,8 +35,6 @@ model User {
 
 model Property {
   id               Int       @id @default(autoincrement())
-  current_occupant Int       @default(0)
-  max_occupancy    Int
   price            Float
   name             String
   description      String
@@ -47,10 +45,11 @@ model Property {
   zip              String
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
-  bookings         Booking[]
+  rentals          Rental[]
   reviews          Review[]
   images           Image[]
-  tenants          User[]
+  tenant_id        Int?      @unique
+  tenant           User?     @relation(fields: [tenant_id], references: [id], onDelete: SetNull)
 
   @@map("properties")
 }
@@ -80,20 +79,20 @@ model Review {
   @@map("reviews")
 }
 
-model Booking {
+model Rental {
   id          Int           @id @default(autoincrement())
   user_id     Int
   property_id Int
   start_date  DateTime
   end_date    DateTime
-  status      BookingStatus @default(pending)
+  status      RentalStatus @default(pending)
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
   user        User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
   property    Property      @relation(fields: [property_id], references: [id], onDelete: Cascade)
   payment     Payment?
 
-  @@map("bookings")
+  @@map("rentals")
 }
 
 model Notification {
@@ -112,14 +111,14 @@ model Notification {
 model Payment {
   id         Int         @id @default(autoincrement())
   user_id    Int
-  booking_id Int         @unique
+  rental_id Int         @unique
   type       PaymentType @default(cash)
   amount     Float
   status     Status      @default(pending)
   created_at DateTime    @default(now())
   updated_at DateTime    @updatedAt
   user       User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  booking    Booking     @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+  rental     Rental     @relation(fields: [rental_id], references: [id], onDelete: Cascade)
 
   @@map("payments")
 }
@@ -155,7 +154,7 @@ enum PaymentType {
   ewallet
 }
 
-enum BookingStatus {
+enum RentalStatus {
   pending
   approved
   declined

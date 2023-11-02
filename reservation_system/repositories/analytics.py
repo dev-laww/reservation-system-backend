@@ -34,7 +34,7 @@ class AnalyticsRepository:
         payments = await self.prisma_client.payment.find_many(
             where=where,
             include={
-                "booking": {
+                "rental": {
                     "include": {
                         "property": True,
                     }
@@ -43,7 +43,7 @@ class AnalyticsRepository:
         )
 
         for payment in payments:
-            ret[payment.booking.property.name] += payment.amount
+            ret[payment.rental.property.name] += payment.amount
 
         return Response.ok(
             "Successfully retrieved analytics.",

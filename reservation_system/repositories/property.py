@@ -292,42 +292,42 @@ class PropertyRepository:
             where={"property_id": property_id}
         )
 
-    async def get_bookings(self, property_id: int) -> list[models.Booking]:
+    async def get_bookings(self, property_id: int) -> list[models.Rental]:
         """
-        Get property bookings.
+        Get property rentals.
 
         :param property_id: property id.
-        :return: list of bookings.
+        :return: list of rentals.
         """
-        return await self.prisma_client.booking.find_many(
+        return await self.prisma_client.rental.find_many(
             where={"property_id": property_id}
         )
 
-    async def create_booking(self, property_id: int, **data) -> models.Booking:
+    async def create_booking(self, property_id: int, **data) -> models.Rental:
         """
-        Create a property booking.
+        Create a property rental.
 
         :param property_id: property id.
-        :param data: booking data.
-        :returns: Booking.
+        :param data: rental data.
+        :returns: Rental.
         """
-        return await self.prisma_client.booking.create(
+        return await self.prisma_client.rental.create(
             data={
                 "property_id": property_id,
                 **data,
             },
         )
 
-    async def get_booking(self, property_id: int, user_id: int) -> models.Booking:
+    async def get_booking(self, property_id: int, user_id: int) -> models.Rental:
         """
-        Get property booking.
+        Get property rental.
 
         :param property_id: property id.
         :param user_id: user id.
-        :return: Booking.
+        :return: Rental.
         """
 
-        return await self.prisma_client.booking.find_first(
+        return await self.prisma_client.rental.find_first(
             where={
                 "property_id": property_id,
                 "user_id": user_id,
@@ -338,16 +338,16 @@ class PropertyRepository:
             },
         )
 
-    async def get_booking_by_id(self, booking_id: int) -> models.Booking:
+    async def get_booking_by_id(self, booking_id: int) -> models.Rental:
         """
-        Get property booking.
+        Get property rental.
 
         :param property_id: property id.
         :param user_id: user id.
-        :return: Booking.
+        :return: Rental.
         """
 
-        return await self.prisma_client.booking.find_first(
+        return await self.prisma_client.rental.find_first(
             where={"id": booking_id},
             include={
                 "property": True,
@@ -355,14 +355,14 @@ class PropertyRepository:
             },
         )
 
-    async def delete_booking(self, booking_id: int) -> models.Booking:
+    async def delete_booking(self, booking_id: int) -> models.Rental:
         """
-        Delete a property booking.
+        Delete a property rental.
 
-        :param booking_id: booking id.
-        :returns: Booking.
+        :param booking_id: rental id.
+        :returns: Rental.
         """
-        return await self.prisma_client.booking.delete(where={"id": booking_id})
+        return await self.prisma_client.rental.delete(where={"id": booking_id})
 
     async def get_tenants(self, property_id: int) -> list[models.User]:
         """

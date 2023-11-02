@@ -2,7 +2,7 @@ import requests
 from fastapi import HTTPException, UploadFile, status
 
 from ..repositories import PropertyRepository, NotificationRepository
-from ..schemas.property import Booking, Property, Review
+from ..schemas.property import Rental, Property, Review
 from ..schemas.query_params import PropertyQuery
 from ..schemas.request import (
     BookingCreate,
@@ -211,21 +211,21 @@ class PropertiesController:
 
     async def get_bookings(self, property_id: int):
         """
-        Get data bookings.
+        Get data rentals.
 
         :param property_id: data id.
-        :return: Property bookings.
+        :return: Property rentals.
         """
         data = await self.repo.get_by_id(property_id=property_id)
 
         if not data:
             raise Response.not_found(message="Property not found")
 
-        bookings = await self.repo.get_bookings(property_id=property_id)
+        rentals = await self.repo.get_bookings(property_id=property_id)
 
         return Response.ok(
-            message="Property bookings retrieved",
-            data=[Booking(**booking.model_dump()).model_dump() for booking in bookings],
+            message="Property rentals retrieved",
+            data=[Rental(**rental.model_dump()).model_dump() for rental in rentals],
         )
 
     async def book_property(self, property_id: int, user_id: int, data: BookingCreate):
@@ -234,8 +234,8 @@ class PropertiesController:
 
         :param property_id: data id.
         :param user_id: user id.
-        :param data: booking data.
-        :return: Property bookings.
+        :param data: rental data.
+        :return: Property rentals.
         """
         prop = await self.repo.get_by_id(property_id=property_id)
 
@@ -251,61 +251,61 @@ class PropertiesController:
         )
 
         if booking_check:
-            raise Response.bad_request(message="You already have a booking")
+            raise Response.bad_request(message="You already have a rental")
 
-        booking = await self.repo.create_booking(
+        rental = await self.repo.create_booking(
             property_id=property_id, user_id=user_id, **data.model_dump()
         )
 
         return Response.ok(
             message="Property booked",
-            data=Booking(**booking.model_dump()).model_dump(),
+            data=Rental(**rental.model_dump()).model_dump(),
         )
 
     async def accept_booking(self, booking_id: int):
-        """Accept data booking.
+        """Accept data rental.
 
-        :param booking_id: booking id.
-        :return: Property bookings.
+        :param booking_id: rental id.
+        :return: Property rentals.
         """
 
-        booking = await self.repo.get_booking_by_id(booking_id=booking_id)
+        rental = await self.repo.get_booking_by_id(booking_id=booking_id)
 
-        if not booking:
-            raise Response.not_found(message="Booking not found")
+        if not rental:
+            raise Response.not_found(message="Rental not found")
 
         await self.repo.delete_booking(booking_id=booking_id)
         await self.repo.add_tenant(
-            property_id=booking.property_id, user_id=booking.user_id
+            property_id=rental.property_id, user_id=rental.user_id
         )
         await self.notif_repo.create(
-            user_id=booking.user_id,
-            message=f"Your booking for {booking.property.name} has been accepted",
+            user_id=rental.user_id,
+            message=f"Your rental for {rental.property.name} has been accepted",
             created_by="SYSTEM",
         )
 
-        return Response.ok(message="Booking accepted")
+        return Response.ok(message="Rental accepted")
 
     async def decline_booking(self, booking_id: int):
-        """Decline data booking.
+        """Decline data rental.
 
-        :param booking_id: booking id.
-        :return: Property bookings.
+        :param booking_id: rental id.
+        :return: Property rentals.
         """
 
-        booking = await self.repo.get_booking_by_id(booking_id=booking_id)
+        rental = await self.repo.get_booking_by_id(booking_id=booking_id)
 
-        if not booking:
-            raise Response.not_found(message="Booking not found")
+        if not rental:
+            raise Response.not_found(message="Rental not found")
 
         await self.repo.delete_booking(booking_id=booking_id)
         await self.notif_repo.create(
-            user_id=booking.user_id,
-            message=f"Your booking for {booking.property.name} has been declined",
+            user_id=rental.user_id,
+            message=f"Your rental for {rental.property.name} has been declined",
             created_by="SYSTEM",
         )
 
-        return Response.ok(message="Booking declined")
+        return Response.ok(message="Rental declined")
 
     async def get_tenants(self, property_id: int):
         """

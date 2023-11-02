@@ -16,7 +16,7 @@ class PaymentRepository:
         return await self.prisma_client.payment.find_unique(
             where={"id": payment_id},
             include={
-                "booking": {
+                "rental": {
                     "include": {
                         "property": True
                     }
@@ -33,7 +33,7 @@ class PaymentRepository:
         """
         return await self.prisma_client.payment.find_many(
             include={
-                "booking": {
+                "rental": {
                     "include": {
                         "property": True
                     }
@@ -63,7 +63,7 @@ class PaymentRepository:
             where={"id": payment_id},
             data=kwargs,
             include={
-                "booking": {
+                "rental": {
                     "include": {
                         "property": True
                     }
@@ -92,7 +92,7 @@ class PaymentRepository:
             where={"id": payment_id},
             data={"status": "PAID"},
             include={
-                "booking": {
+                "rental": {
                     "include": {
                         "property": True
                     }
@@ -112,7 +112,7 @@ class PaymentRepository:
             where={"id": payment_id},
             data={"status": "DECLINED"},
             include={
-                "booking": {
+                "rental": {
                     "include": {
                         "property": True
                     }
