@@ -40,7 +40,7 @@ class TenantsController:
             data=[Tenant(**{**tenant.model_dump(), "property": tenant.tenant_property.property.model_dump()}).model_dump() for tenant in tenants],
         )
 
-    async def notify_tenant(self, tenant_id: int, message: Notify):
+    async def notify_tenant(self, tenant_id: int, message: Notify, created_by: str = "System"):
         """
         Notify tenant.
 
@@ -57,7 +57,7 @@ class TenantsController:
         notification = await self.notif_repo.create(
             user_id=tenant_id,
             message=message.message,
-            created_by="System",
+            created_by=created_by,
         )
 
         return Response.ok(

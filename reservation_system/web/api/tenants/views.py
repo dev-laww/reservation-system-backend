@@ -20,9 +20,9 @@ async def get_tenant(tenant_id: int):
 
 @router.post("/{tenant_id}/notifications")
 async def notify_tenant(tenant_id: int, message: Notify):
-    return await controller.notify_tenant(tenant_id=tenant_id, message=message)
+    return await controller.notify_tenant(tenant_id=tenant_id, message=message, created_by="Admin")
 
 
 @router.post("/notifications")
-async def notify_all(message: str = Body(embed=True)):
-    return await notification_controller.notify_all(message=message, created_by="ADMIN")
+async def notify_all(message: Notify):
+    return await notification_controller.notify_all(message=message, created_by="Admin")
