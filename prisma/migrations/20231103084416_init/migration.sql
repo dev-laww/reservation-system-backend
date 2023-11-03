@@ -27,6 +27,7 @@ CREATE TABLE "users" (
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
+ALTER SEQUENCE "users_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "properties" (
@@ -44,6 +45,7 @@ CREATE TABLE "properties" (
 
     CONSTRAINT "properties_pkey" PRIMARY KEY ("id")
 );
+ALTER SEQUENCE "properties_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "tenant_properties" (
@@ -53,6 +55,7 @@ CREATE TABLE "tenant_properties" (
 
     CONSTRAINT "tenant_properties_pkey" PRIMARY KEY ("user_id","property_id")
 );
+ALTER SEQUENCE "tenant_properties_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "images" (
@@ -64,6 +67,7 @@ CREATE TABLE "images" (
 
     CONSTRAINT "images_pkey" PRIMARY KEY ("id")
 );
+ALTER SEQUENCE "images_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "reviews" (
@@ -77,6 +81,7 @@ CREATE TABLE "reviews" (
 
     CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
+ALTER SEQUENCE "reviews_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "rentals" (
@@ -91,6 +96,7 @@ CREATE TABLE "rentals" (
 
     CONSTRAINT "rentals_pkey" PRIMARY KEY ("id")
 );
+ALTER SEQUENCE "rentals_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "notifications" (
@@ -104,6 +110,7 @@ CREATE TABLE "notifications" (
 
     CONSTRAINT "notifications_pkey" PRIMARY KEY ("id")
 );
+ALTER SEQUENCE "notifications_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "payments" (
@@ -118,6 +125,7 @@ CREATE TABLE "payments" (
 
     CONSTRAINT "payments_pkey" PRIMARY KEY ("id")
 );
+ALTER SEQUENCE "payments_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "access_tokens" (
@@ -129,6 +137,7 @@ CREATE TABLE "access_tokens" (
 
     CONSTRAINT "access_tokens_pkey" PRIMARY KEY ("id")
 );
+ALTER SEQUENCE "access_tokens_id_seq" RESTART WITH 1000;
 
 -- CreateTable
 CREATE TABLE "email_tokens" (
@@ -140,6 +149,7 @@ CREATE TABLE "email_tokens" (
 
     CONSTRAINT "email_tokens_pkey" PRIMARY KEY ("id")
 );
+ALTER SEQUENCE "email_tokens_id_seq" RESTART WITH 1000;
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");

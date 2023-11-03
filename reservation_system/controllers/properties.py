@@ -366,7 +366,7 @@ class PropertiesController:
         ):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Property already taken.",
+                detail="Property already taken or User is already in a property.",
             )
 
         await self.repo.add_tenant(property_id=property_id, user_id=user_id)
