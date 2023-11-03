@@ -15,7 +15,10 @@ class UserRepository:
         :param user_id: user id.
         :return: User.
         """
-        return await self.prisma_client.user.find_first(where={"id": user_id})
+        return await self.prisma_client.user.find_first(
+            where={"id": user_id},
+            include={"tenant_property": {"include": {"property": True}}}
+        )
 
     async def get_by_email(self, email: str) -> models.User:
         """
@@ -24,7 +27,10 @@ class UserRepository:
         :param email: user email.
         :return: User.
         """
-        return await self.prisma_client.user.find_first(where={"email": email})
+        return await self.prisma_client.user.find_first(
+            where={"email": email},
+            include={"tenant_property": {"include": {"property": True}}}
+        )
 
     async def create(self, **data) -> models.User:
         """
@@ -195,10 +201,10 @@ class UserRepository:
         return await self.prisma_client.user.find_many(
             where={
                 "NOT": {
-                    "property": None
+                    "tenant_property": None
                 }
             },
-            include={"property": True},
+            include={"tenant_property": {"include": {"property": True}}},
         )
 
     async def get_tenant(self, user_id: int) -> models.User | None:
@@ -209,12 +215,14 @@ class UserRepository:
         :return: Tenant.
         """
         tenant = await self.prisma_client.user.find_first(
-            where={"id": user_id},
-            include={"property": True},
+            where={
+                "id": user_id,
+                "NOT": {
+                    "tenant_property": None
+                }
+            },
+            include={"tenant_property": {"include": {"property": True}}},
         )
-
-        if not tenant or not tenant.property:
-            return
 
         return tenant
 

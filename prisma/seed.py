@@ -16,7 +16,8 @@ seeding_order = [
     'notification',
     'rental',
     'payment',
-    'review'
+    'review',
+    'tenantproperty'
 ]
 
 

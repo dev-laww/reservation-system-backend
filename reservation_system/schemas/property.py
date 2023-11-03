@@ -33,12 +33,26 @@ class Property(CamelBaseModel):
     city: str
     state: str
     zip: str
-    occupied: bool
+    occupied: bool = False
     created_at: datetime
     updated_at: datetime
     images: list[PropertyImage]
     reviews: list[Review]
     tenant: Optional[User]
+
+
+class PropertyBasic(CamelBaseModel):
+    id: int
+    name: str
+    description: str
+    price: int
+    type: str
+    address: str
+    city: str
+    state: str
+    zip: str
+    created_at: datetime
+    updated_at: datetime
 
 
 class Rental(CamelBaseModel):
@@ -50,3 +64,4 @@ class Rental(CamelBaseModel):
     status: str
     created_at: datetime
     updated_at: datetime
+    property: PropertyBasic

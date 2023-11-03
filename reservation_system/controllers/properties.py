@@ -1,7 +1,7 @@
 import requests
 from fastapi import HTTPException, UploadFile, status
 
-from ..repositories import PropertyRepository, NotificationRepository
+from ..repositories import PropertyRepository, NotificationRepository, UserRepository
 from ..schemas.property import Rental, Property, Review
 from ..schemas.query_params import PropertyQuery
 from ..schemas.request import (
@@ -17,6 +17,7 @@ from ..utils.response import Response
 
 
 class PropertiesController:
+    user_repo = UserRepository()
     repo = PropertyRepository()
     notif_repo = NotificationRepository()
 
@@ -34,7 +35,8 @@ class PropertiesController:
 
         property_data = {
             **data.model_dump(),
-            "occupied": bool(data.tenant),
+            "occupied": bool(data.tenant_property),
+            "tenant": data.tenant_property.user.model_dump() if data.tenant_property else None,
         }
 
         return Response.ok(
@@ -56,25 +58,30 @@ class PropertiesController:
                 Property(
                     **{
                         **data.model_dump(),
-                        "occupied": bool(data.tenant),
+                        "occupied": bool(data.tenant_property),
+                        "tenant": data.tenant_property.user.model_dump() if data.tenant_property else None,
                     }
                 ).model_dump()
                 for data in properties
             ],
         )
 
-    async def create_property(self, data: PropertyCreate):
+    async def create_property(self, data_in: PropertyCreate):
         """
         Create property.
 
         :param data: property data.
         :return: Property.
         """
-        data = await self.repo.create(**data.model_dump())
+
+        data = await self.repo.create(**data_in.model_dump())
 
         return Response.ok(
             message="Property created",
-            data=Property(**data.model_dump()).model_dump(),
+            data=Property(**{
+                **data.model_dump(),
+                "tenant": data.tenant_property.user.model_dump() if data.tenant_property else None
+            }).model_dump(),
         )
 
     async def update_property(self, property_id: int, data: PropertyUpdate):
@@ -93,7 +100,10 @@ class PropertiesController:
 
         return Response.ok(
             message="Property updated",
-            data=Property(**data.model_dump()).model_dump(),
+            data=Property(**{
+                **data.model_dump(),
+                "tenant": data.tenant_property.user.model_dump() if data.tenant_property else None,
+            }).model_dump(),
         )
 
     async def delete_property(self, property_id: int):
@@ -110,7 +120,10 @@ class PropertiesController:
 
         return Response.ok(
             message="Property deleted",
-            data=Property(**data.model_dump()).model_dump(),
+            data=Property(**{
+                **data.model_dump(),
+                "tenant": data.tenant_property.user.model_dump() if data.tenant_property else None,
+            }).model_dump(),
         )
 
     async def get_reviews(self, property_id: int):
@@ -309,7 +322,7 @@ class PropertiesController:
 
     async def get_tenants(self, property_id: int):
         """
-        Get data tenants.
+        Get data tenant.
 
         :param property_id: data id.
         :return: Property tenants.
@@ -319,11 +332,15 @@ class PropertiesController:
         if not data:
             raise Response.not_found(message="Property not found")
 
-        tenants = await self.repo.get_tenants(property_id=property_id)
+        if not data.tenant_property:
+            raise Response.not_found(message="Property has no tenants")
 
         return Response.ok(
             message="Property tenants retrieved",
-            data=[Tenant(**tenant.model_dump()).model_dump() for tenant in tenants],
+            data=Tenant(**{
+                **data.tenant_property.user.model_dump(),
+                "property": data.model_dump()
+            }).model_dump()
         )
 
     async def add_tenant(self, property_id: int, user_id: int):
@@ -339,22 +356,20 @@ class PropertiesController:
         if not data:
             raise Response.not_found(message="Property not found")
 
-        tenant_check = await self.repo.get_tenant(user_id=user_id)
+        user = await self.user_repo.get_by_id(user_id=user_id)
 
-        if not tenant_check:
-            raise Response.not_found(message="User not found")
-
-        if tenant_check.property_id == property_id:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User is already a tenant",
-            )
-
-        tenant = await self.repo.add_tenant(property_id=property_id, user_id=user_id)
-
-        if not tenant:
+        if not user:
             raise Response.bad_request(message="User not found")
 
+        if (
+            data.tenant_property or user.tenant_property
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Property already taken.",
+            )
+
+        await self.repo.add_tenant(property_id=property_id, user_id=user_id)
         return Response.ok(message="Tenant added")
 
     async def remove_tenant(self, property_id: int, tenant_id: int):
@@ -371,12 +386,10 @@ class PropertiesController:
         if not data:
             raise Response.not_found(message="Property not found")
 
-        tenant_check = await self.repo.get_tenant(user_id=tenant_id)
+        tenant_check = await self.repo.get_tenant(property_id=property_id)
 
-        if not tenant_check or (
-            tenant_check and tenant_check.property_id != property_id
-        ):
-            raise Response.bad_request(message="User is not a tenant")
+        if not tenant_check or tenant_check.user.id != tenant_id:
+            raise Response.bad_request(message="User is not a tenant of this property")
 
         await self.repo.remove_tenant(property_id=property_id, user_id=tenant_id)
 

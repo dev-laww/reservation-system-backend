@@ -27,7 +27,7 @@ async def get_property(property_id: int):
 
 @router.post("", dependencies=[Depends(ADMIN_AUTH)])
 async def create_property(data: PropertyCreate):
-    return await controller.create_property(data=data)
+    return await controller.create_property(data_in=data)
 
 
 @router.post("/{property_id}/images", dependencies=[Depends(ADMIN_AUTH)])

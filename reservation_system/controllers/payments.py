@@ -1,6 +1,7 @@
 from ..repositories import PaymentRepository, NotificationRepository
 
 from ..utils.response import Response
+from ..schemas.payments import Payments
 
 
 class PaymentsController:
@@ -11,7 +12,10 @@ class PaymentsController:
     async def get_all_payments(self):
         payments = await self.__repo.get_all()
 
-        return Response.ok(message="Successfully retrieved payments.", data=payments)
+        return Response.ok(
+            message="Successfully retrieved payments.",
+            data=[Payments(**payment.model_dump()).model_dump() for payment in payments],
+        )
 
     async def get_payment(self, payment_id: int):
         payment = await self.__repo.get_by_id(payment_id=payment_id)
@@ -19,7 +23,10 @@ class PaymentsController:
         if not payment:
             return Response.not_found(message="Payment not found.")
 
-        return Response.ok(message="Successfully retrieved payment.", data=payment)
+        return Response.ok(
+            message="Successfully retrieved payment.",
+            data=Payments(**payment.model_dump()).model_dump()
+        )
 
     async def mark_as_paid(self, payment_id: int):
         payment = await self.__repo.get_by_id(payment_id=payment_id)

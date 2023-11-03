@@ -13,7 +13,6 @@ datasource db {
 
 model User {
   id            Int            @id @default(autoincrement())
-  property_id   Int?
   email         String         @unique
   first_name    String
   last_name     String
@@ -26,7 +25,7 @@ model User {
   rentals       Rental[]
   payments      Payment[]
   notifications Notification[]
-  property      Property?
+  tenant_property TenantProperty?
   tokens        RefreshToken[]
   email_tokens  EmailToken[]
 
@@ -48,10 +47,21 @@ model Property {
   rentals     Rental[]
   reviews     Review[]
   images      Image[]
-  tenant_id   Int?         @unique
-  tenant      User?        @relation(fields: [tenant_id], references: [id], onDelete: SetNull)
+  tenant_property      TenantProperty?
 
   @@map("properties")
+}
+
+model TenantProperty {
+  id          Int   @unique @default(autoincrement())
+  user_id     Int   @unique
+  property_id Int   @unique
+
+  user     User     @relation(fields: [user_id], references: [id])
+  property Property @relation(fields: [property_id], references: [id])
+
+  @@id([user_id, property_id])
+  @@map("tenant_properties")
 }
 
 model Image {

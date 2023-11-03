@@ -14,12 +14,17 @@ class PropertyRepository:
         :param property_id: property id.
         :return: Property.
         """
-        return await self.prisma_client.property.find_unique(
+        return await self.prisma_client.property.find_first(
             where={"id": property_id},
             include={
                 "images": True,
                 "reviews": {
                     "include": {"user": True}
+                },
+                "tenant_property": {
+                    "include": {
+                        "user": True
+                    }
                 }
             },
         )
@@ -36,7 +41,11 @@ class PropertyRepository:
             include={
                 "images": True,
                 "reviews": True,
-                "tenants": True,
+                "tenant_property": {
+                    "include": {
+                        "user": True
+                    }
+                }
             },
         )
 
@@ -92,7 +101,11 @@ class PropertyRepository:
             include={
                 "images": True,
                 "reviews": True,
-                "tenant": True,
+                "tenant_property": {
+                    "include": {
+                        "user": True
+                    }
+                }
             },
         )
 
@@ -108,7 +121,11 @@ class PropertyRepository:
             include={
                 "images": True,
                 "reviews": True,
-                "tenant": True,
+                "tenant_property": {
+                    "include": {
+                        "user": True
+                    }
+                }
             },
         )
 
@@ -126,7 +143,11 @@ class PropertyRepository:
             include={
                 "images": True,
                 "reviews": True,
-                "tenant": True,
+                "tenant_property": {
+                    "include": {
+                        "user": True
+                    }
+                }
             },
         )
 
@@ -142,7 +163,11 @@ class PropertyRepository:
             include={
                 "images": True,
                 "reviews": True,
-                "tenant": True,
+                "tenant_property": {
+                    "include": {
+                        "user": True
+                    }
+                }
             },
         )
 
@@ -329,17 +354,6 @@ class PropertyRepository:
         """
         return await self.prisma_client.rental.delete(where={"id": rental_id})
 
-    async def get_tenants(self, property_id: int) -> list[models.User]:
-        """
-        Get property tenants.
-
-        :param property_id: property id.
-        :return: list of tenants.
-        """
-        return await self.prisma_client.user.find_many(
-            where={"property_id": property_id}
-        )
-
     async def add_tenant(self, property_id: int, user_id: int) -> models.User:
         """
         Add tenant to property.
@@ -348,12 +362,14 @@ class PropertyRepository:
         :param user_id: user id.
         :return: User.
         """
-        return await self.prisma_client.property.update(
-            where={"id": property_id},
-            data={"tenant": {"connect": {"id": user_id}}},
+        return await self.prisma_client.tenantproperty.create(
+            data={
+                "property_id": property_id,
+                "user_id": user_id,
+            }
         )
 
-    async def remove_tenant(self, property_id: int, user_id: int) -> models.User:
+    async def remove_tenant(self, property_id: int, user_id: int) -> models.TenantProperty:
         """
         Remove tenant from property.
 
@@ -361,16 +377,22 @@ class PropertyRepository:
         :param user_id: user id.
         :return: User.
         """
-        return await self.prisma_client.property.update(
-            where={"id": property_id},
-            data={"tenant": {"disconnect": {"id": user_id}}},
+        return await self.prisma_client.tenantproperty.delete(
+            where={
+                "property_id": property_id,
+            }
         )
 
-    async def get_tenant(self, user_id: int) -> models.User:
+    async def get_tenant(self, property_id: int) -> models.TenantProperty:
         """
         Get tenant.
 
         :param user_id: user id.
         :return: User.
         """
-        return await self.prisma_client.user.find_first(where={"id": user_id})
+        data = await self.prisma_client.tenantproperty.find_first(
+            where={"property_id": property_id},
+            include={"user": {"include": {"tenant_property": {"include": {"property": True}}}}},
+        )
+
+        return data

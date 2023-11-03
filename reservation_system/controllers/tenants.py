@@ -23,7 +23,7 @@ class TenantsController:
 
         return Response.ok(
             message="Tenant retrieved",
-            data=Tenant(**tenant.model_dump()).model_dump(),
+            data=Tenant(**{**tenant.model_dump(), "property": tenant.tenant_property.property.model_dump()}).model_dump(),
         )
 
     async def get_tenants(self):
@@ -37,7 +37,7 @@ class TenantsController:
 
         return Response.ok(
             message="Tenants retrieved",
-            data=[Tenant(**tenant.model_dump()).model_dump() for tenant in tenants],
+            data=[Tenant(**{**tenant.model_dump(), "property": tenant.tenant_property.property.model_dump()}).model_dump() for tenant in tenants],
         )
 
     async def notify_tenant(self, tenant_id: int, message: Notify):

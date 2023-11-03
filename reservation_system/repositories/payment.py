@@ -13,7 +13,7 @@ class PaymentRepository:
         :param payment_id: payment id.
         :return: Payment.
         """
-        return await self.prisma_client.payment.find_unique(
+        return await self.prisma_client.payment.find_first(
             where={"id": payment_id},
             include={
                 "rental": {
