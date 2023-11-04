@@ -57,11 +57,11 @@ class PropertyBasic(CamelBaseModel):
 
 class Rental(CamelBaseModel):
     id: int
-    user_id: int
-    property_id: int
     start_date: datetime
     end_date: datetime
     status: str
     created_at: datetime
     updated_at: datetime
+    user: User
     property: PropertyBasic
+    payment: dict

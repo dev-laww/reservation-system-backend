@@ -290,7 +290,12 @@ class PropertyRepository:
         :return: list of rentals.
         """
         return await self.prisma_client.rental.find_many(
-            where={"property_id": property_id}
+            where={"property_id": property_id},
+            include={
+                "payment": True,
+                "user": True,
+                "property": True,
+            }
         )
 
     async def create_rental(self, property_id: int, **data) -> models.Rental:
@@ -325,6 +330,7 @@ class PropertyRepository:
             include={
                 "property": True,
                 "user": True,
+                "payment": True,
             },
         )
 
@@ -342,6 +348,7 @@ class PropertyRepository:
             include={
                 "property": True,
                 "user": True,
+                "payment": True,
             },
         )
 

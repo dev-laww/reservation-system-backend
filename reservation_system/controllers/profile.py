@@ -3,6 +3,7 @@ from fastapi import HTTPException, status
 from ..repositories import UserRepository
 from ..schemas.profile import Profile, Notification
 from ..schemas.request import ChangePassword, UpdateProfile
+from ..schemas.property import Rental
 from ..utils.hashing import check_password, hash_password
 from ..utils.response import Response
 
@@ -132,7 +133,7 @@ class ProfileController:
 
         return Response.ok(
             message="Rentals retrieved",
-            data=[rental.model_dump() for rental in rentals],
+            data=[Rental(**rental.model_dump()).model_dump() for rental in rentals],
         )
 
     async def get_rental(self, user_id: int, rental_id: int):
@@ -151,7 +152,7 @@ class ProfileController:
 
         return Response.ok(
             message="Rental retrieved",
-            data=rental.model_dump(),
+            data=Rental(**rental.model_dump()).model_dump(),
         )
 
     async def cancel_rental(self, user_id: int, rental_id: int):

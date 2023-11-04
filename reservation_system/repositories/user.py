@@ -81,7 +81,14 @@ class UserRepository:
         :param user_id: user id.
         :return: list of rentals.
         """
-        return await self.prisma_client.rental.find_many(where={"user_id": user_id})
+        return await self.prisma_client.rental.find_many(
+            where={"user_id": user_id},
+            include={
+                "payment": True,
+                "user": True,
+                "property": True,
+            }
+        )
 
     async def get_rental(self, user_id: int, rental_id: int) -> models.Rental:
         """
@@ -92,7 +99,15 @@ class UserRepository:
         :return: Rental.
         """
         return await self.prisma_client.rental.find_first(
-            where={"id": rental_id, "user_id": user_id},
+            where={
+                "id": rental_id,
+                "user_id": user_id
+            },
+            include={
+                "payment": True,
+                "user": True,
+                "property": True,
+            }
         )
 
     async def cancel_rental(self, user_id: int, rental_id: int) -> models.Rental:

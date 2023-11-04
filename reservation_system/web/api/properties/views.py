@@ -94,7 +94,7 @@ async def create_rental(property_id: int, data: RentalCreate, user=Depends(AUTH)
 
 
 @router.post("/rentals/{rental_id}/accept", dependencies=[Depends(ADMIN_AUTH)])
-async def accept_rental(property_id: int, rental_id: int):
+async def accept_rental(rental_id: int):
     return await controller.accept_rental(
         rental_id=rental_id,
     )
