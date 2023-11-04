@@ -173,10 +173,10 @@ CREATE UNIQUE INDEX "access_tokens_token_key" ON "access_tokens"("token");
 CREATE UNIQUE INDEX "email_tokens_token_key" ON "email_tokens"("token");
 
 -- AddForeignKey
-ALTER TABLE "tenant_properties" ADD CONSTRAINT "tenant_properties_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tenant_properties" ADD CONSTRAINT "tenant_properties_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tenant_properties" ADD CONSTRAINT "tenant_properties_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "properties"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tenant_properties" ADD CONSTRAINT "tenant_properties_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "properties"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "images" ADD CONSTRAINT "images_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "properties"("id") ON DELETE CASCADE ON UPDATE CASCADE;

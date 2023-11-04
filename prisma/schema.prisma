@@ -57,8 +57,8 @@ model TenantProperty {
   user_id     Int   @unique
   property_id Int   @unique
 
-  user     User     @relation(fields: [user_id], references: [id])
-  property Property @relation(fields: [property_id], references: [id])
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
 
   @@id([user_id, property_id])
   @@map("tenant_properties")
