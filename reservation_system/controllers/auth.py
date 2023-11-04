@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from ..repositories import UserRepository
 from ..schemas.request import ForgotPassowrd, PasswordReset, RegisterUser
 from ..schemas.response import AuthResponse, Token
+from ..settings import settings
 from ..utils.hashing import check_password, hash_password
 from ..utils.jwt import encode_token
 from ..utils.mail import send_email
@@ -134,7 +135,7 @@ class AuthController:
                 to=data.email,
                 subject="Password reset",
                 body=f"""
-                <a>http://localhost:3000/auth/reset-password?token={token}</a>
+                <a>{settings.frontend_url}/auth/reset-password?token={token}</a>
                 """,
             )
         )
