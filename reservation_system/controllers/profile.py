@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 
 from ..repositories import UserRepository
-from ..schemas.profile import Profile
+from ..schemas.profile import Profile, Notification
 from ..schemas.request import ChangePassword, UpdateProfile
 from ..utils.hashing import check_password, hash_password
 from ..utils.response import Response
@@ -104,7 +104,7 @@ class ProfileController:
 
         return Response.ok(
             message="Notification marked as read",
-            data=notification.model_dump(),
+            data=Notification(**notification.model_dump()).model_dump(),
         )
 
     async def mark_all_read(self, user_id: int):

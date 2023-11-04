@@ -155,15 +155,15 @@ class UserRepository:
         """
 
         if not await self.prisma_client.notification.find_first(
-            where={"id": notification_id},
-        ):
-            return None
-
-        return await self.prisma_client.notification.update(
             where={
                 "id": notification_id,
                 "user_id": user_id,
             },
+        ):
+            return
+
+        return await self.prisma_client.notification.update(
+            where={"id": notification_id},
             data={"seen": True},
         )
 
