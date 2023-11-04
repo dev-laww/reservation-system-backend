@@ -62,6 +62,6 @@ class Rental(CamelBaseModel):
     status: str
     created_at: datetime
     updated_at: datetime
-    user: User
+    user: Optional[User]
     property: PropertyBasic
-    payment: dict
+    payment: Optional[dict]
