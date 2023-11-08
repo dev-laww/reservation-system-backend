@@ -352,14 +352,37 @@ class PropertyRepository:
             },
         )
 
-    async def delete_rental(self, rental_id: int) -> models.Rental:
+    async def accept_rental(self, rental_id: int) -> models.Rental:
         """
         Delete a property rental.
 
         :param rental_id: rental id.
         :returns: Rental.
         """
-        return await self.prisma_client.rental.delete(where={"id": rental_id})
+        return await self.prisma_client.rental.update(
+            where={
+                "id": rental_id,
+            },
+            data={
+                "status": "approved"
+            }
+        )
+
+    async def decline_rental(self, rental_id: int) -> models.Rental:
+        """Decline a rental.
+
+        :param rental_id: rental id.
+        :returns: Rental.
+        """
+
+        return await self.prisma_client.rental.update(
+            where={
+                "id": rental_id,
+            },
+            data={
+                "status": "declined"
+            }
+        )
 
     async def add_tenant(self, property_id: int, user_id: int) -> models.User:
         """

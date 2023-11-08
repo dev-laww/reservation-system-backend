@@ -287,7 +287,7 @@ class PropertiesController:
         if not rental:
             raise Response.not_found(message="Rental not found")
 
-        await self.repo.delete_rental(rental_id=rental_id)
+        await self.repo.accept_rental(rental_id=rental_id)
         await self.repo.add_tenant(
             property_id=rental.property_id, user_id=rental.user_id
         )
@@ -311,7 +311,7 @@ class PropertiesController:
         if not rental:
             raise Response.not_found(message="Rental not found")
 
-        await self.repo.delete_rental(rental_id=rental_id)
+        await self.repo.decline_rental(rental_id=rental_id)
         await self.notif_repo.create(
             user_id=rental.user_id,
             message=f"Your rental for {rental.property.name} has been declined",
