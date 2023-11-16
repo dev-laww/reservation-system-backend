@@ -426,3 +426,51 @@ class PropertyRepository:
         )
 
         return data
+
+    async def get_ratings(self, property_id: int) -> int:
+        """
+        Get property star ratings.
+
+        :param property_id: property id.
+        :return: star ratings.
+        """
+
+        count = await self.prisma_client.review.count(
+            where={
+                "property_id": property_id,
+            }
+        )
+        print(count)
+        one = await self.prisma_client.review.count(
+            where={
+                "rating": 1,
+            }
+        )
+
+        two = await self.prisma_client.review.count(
+            where={
+                "rating": 2,
+            }
+        )
+
+        three = await self.prisma_client.review.count(
+            where={
+                "rating": 3,
+            }
+        )
+
+        four = await self.prisma_client.review.count(
+            where={
+                "rating": 4,
+            }
+        )
+
+        five = await self.prisma_client.review.count(
+            where={
+                "rating": 5,
+            }
+        )
+
+        if count:
+            return (one * 1) + (two * 2) + (three * 3) + (four * 4) + (five * 5) / count
+        return 0

@@ -39,6 +39,7 @@ class PropertiesController:
             **data.model_dump(),
             "occupied": bool(data.tenant_property),
             "tenant": data.tenant_property.user.model_dump() if data.tenant_property else None,
+            "ratings": await self.get_ratings(property_id=property_id)
         }
 
         return Response.ok(
@@ -52,6 +53,7 @@ class PropertiesController:
 
         :return: Properties.
         """
+        await self.get_ratings(property_id=1)
         properties = await self.repo.get_all(filters)
 
         return Response.ok(
@@ -62,6 +64,7 @@ class PropertiesController:
                         **data.model_dump(),
                         "occupied": bool(data.tenant_property),
                         "tenant": data.tenant_property.user.model_dump() if data.tenant_property else None,
+                        "ratings": await self.get_ratings(property_id=data.id),
                     }
                 ).model_dump()
                 for data in properties
@@ -82,7 +85,8 @@ class PropertiesController:
             message="Property created",
             data=Property(**{
                 **data.model_dump(),
-                "tenant": data.tenant_property.user.model_dump() if data.tenant_property else None
+                "tenant": data.tenant_property.user.model_dump() if data.tenant_property else None,
+                "ratings": await self.get_ratings(property_id=data.id),
             }).model_dump(),
         )
 
@@ -105,6 +109,7 @@ class PropertiesController:
             data=Property(**{
                 **data.model_dump(),
                 "tenant": data.tenant_property.user.model_dump() if data.tenant_property else None,
+                "ratings": await self.get_ratings(property_id=data.id),
             }).model_dump(),
         )
 
@@ -125,6 +130,7 @@ class PropertiesController:
             data=Property(**{
                 **data.model_dump(),
                 "tenant": data.tenant_property.user.model_dump() if data.tenant_property else None,
+                "ratings": await self.get_ratings(property_id=data.id),
             }).model_dump(),
         )
 
@@ -462,3 +468,6 @@ class PropertiesController:
         await self.repo.remove_image(image_id=image_id)
 
         return Response.ok(message="Image removed")
+
+    async def get_ratings(self, property_id: int) -> int:
+        return await self.repo.get_ratings(property_id=property_id)

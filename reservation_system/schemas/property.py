@@ -34,6 +34,7 @@ class Property(CamelBaseModel):
     state: str
     zip: str
     occupied: bool = False
+    ratings: float
     created_at: datetime
     updated_at: datetime
     images: list[PropertyImage]
