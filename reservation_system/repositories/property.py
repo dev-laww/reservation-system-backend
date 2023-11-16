@@ -440,7 +440,7 @@ class PropertyRepository:
                 "property_id": property_id,
             }
         )
-        print(count)
+
         one = await self.prisma_client.review.count(
             where={
                 "rating": 1,
@@ -472,5 +472,5 @@ class PropertyRepository:
         )
 
         if count:
-            return (one * 1) + (two * 2) + (three * 3) + (four * 4) + (five * 5) / count
+            return ((one * 1) + (two * 2) + (three * 3) + (four * 4) + (five * 5)) / count
         return 0
