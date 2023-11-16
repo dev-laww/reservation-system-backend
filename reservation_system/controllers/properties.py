@@ -1,7 +1,8 @@
 import requests
 from fastapi import HTTPException, UploadFile, status
 
-from ..repositories import PropertyRepository, NotificationRepository, UserRepository
+from ..repositories import (PropertyRepository, NotificationRepository, UserRepository,
+                            PaymentRepository)
 from ..schemas.property import Rental, Property, Review
 from ..schemas.query_params import PropertyQuery
 from ..schemas.request import (
@@ -20,6 +21,7 @@ class PropertiesController:
     user_repo = UserRepository()
     repo = PropertyRepository()
     notif_repo = NotificationRepository()
+    payment_repo = PaymentRepository()
 
     async def get_property(self, property_id: int):
         """
@@ -270,9 +272,19 @@ class PropertiesController:
             property_id=property_id, user_id=user_id, **data.model_dump()
         )
 
+        payment = await self.payment_repo.create(
+            user_id=user_id,
+            rental_id=rental.id,
+            amount=data.amount,
+            created_by="SYSTEM",
+        )
+        payment = payment.model_dump()
+        rental = rental.model_dump()
+        rental["payment"] = payment
+
         return Response.ok(
             message="Property booked",
-            data=Rental(**rental.model_dump()).model_dump(),
+            data=Rental(**rental).model_dump(),
         )
 
     async def accept_rental(self, rental_id: int):

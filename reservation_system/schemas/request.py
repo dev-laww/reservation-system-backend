@@ -83,6 +83,8 @@ class ReviewUpdate(CamelBaseModel):
 class RentalCreate(CamelBaseModel):
     start_date: datetime
     end_date: datetime
+    payment_type: str
+    amount: float
 
 
 # Tenant Schemas
