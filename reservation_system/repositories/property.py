@@ -443,30 +443,35 @@ class PropertyRepository:
 
         one = await self.prisma_client.review.count(
             where={
+                "property_id": property_id,
                 "rating": 1,
             }
         )
 
         two = await self.prisma_client.review.count(
             where={
+                "property_id": property_id,
                 "rating": 2,
             }
         )
 
         three = await self.prisma_client.review.count(
             where={
+                "property_id": property_id,
                 "rating": 3,
             }
         )
 
         four = await self.prisma_client.review.count(
             where={
+                "property_id": property_id,
                 "rating": 4,
             }
         )
 
         five = await self.prisma_client.review.count(
             where={
+                "property_id": property_id,
                 "rating": 5,
             }
         )

@@ -270,14 +270,14 @@ class UserRepository:
 
         return await self.prisma_client.refreshtoken.create(data=data)
 
-    async def delete_refresh_token(self, user_id: int) -> models.RefreshToken:
+    async def delete_refresh_token(self, token: str) -> models.RefreshToken:
         """
         Delete user refresh token.
 
         :param user_id: user id.
         :return: RefreshToken.
         """
-        return await self.prisma_client.refreshtoken.delete(where={"user_id": user_id})
+        return await self.prisma_client.refreshtoken.delete(where={"token": token})
 
     async def get_email_token(self, code: str, type: enums.TokenType):
         """

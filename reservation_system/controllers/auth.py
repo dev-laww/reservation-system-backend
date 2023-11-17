@@ -109,11 +109,16 @@ class AuthController:
             **token.user.model_dump(),
         }
 
-        await self.repo.create_refresh_token(
-            user_id=token.user.id,
-            token=refresh_token,
-            expires_at=datetime.now() + timedelta(days=30),
-        )
+        try:
+            await self.repo.delete_refresh_token(token=refresh_token)
+            await self.repo.create_refresh_token(
+                user_id=token.user.id,
+                token=refresh_token,
+                expires_at=datetime.now() + timedelta(days=30),
+            )
+
+        except Exception as _:
+            pass
 
         return Token(
             status="success",
