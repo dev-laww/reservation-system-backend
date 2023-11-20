@@ -263,7 +263,7 @@ class PropertiesController:
         if not prop:
             raise Response.not_found(message="Property not found")
 
-        if prop.tenant:
+        if prop.tenant_property:
             raise Response.bad_request(message="Property is taken")
 
         rental_check = await self.repo.get_rental(
