@@ -311,6 +311,9 @@ class PropertyRepository:
                 "property_id": property_id,
                 **data,
             },
+            include={
+                "property": True,
+            }
         )
 
     async def get_rental(self, property_id: int, user_id: int) -> models.Rental:

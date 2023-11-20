@@ -275,14 +275,16 @@ class PropertiesController:
             raise Response.bad_request(message="You already have a rental")
 
         rental = await self.repo.create_rental(
-            property_id=property_id, user_id=user_id, **data.model_dump()
+            property_id=property_id,
+            user_id=user_id,
+            start_date=data.start_date,
+            end_date=data.end_date,
         )
 
         payment = await self.payment_repo.create(
             user_id=user_id,
             rental_id=rental.id,
             amount=data.amount,
-            created_by="SYSTEM",
         )
         payment = payment.model_dump()
         rental = rental.model_dump()
