@@ -308,14 +308,16 @@ class PropertiesController:
             raise Response.not_found(message="Rental not found")
 
         await self.repo.accept_rental(rental_id=rental_id)
-        await self.repo.add_tenant(
-            property_id=rental.property_id, user_id=rental.user_id
-        )
-        await self.notif_repo.create(
-            user_id=rental.user_id,
-            message=f"Your rental for {rental.property.name} has been accepted",
-            created_by="SYSTEM",
-        )
+
+        if not rental.property.tenant_property:
+            await self.repo.add_tenant(
+                property_id=rental.property_id, user_id=rental.user_id
+            )
+            await self.notif_repo.create(
+                user_id=rental.user_id,
+                message=f"Your rental for {rental.property.name} has been accepted",
+                created_by="SYSTEM",
+            )
 
         return Response.ok(message="Rental accepted")
 

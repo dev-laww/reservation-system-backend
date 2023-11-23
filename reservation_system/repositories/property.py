@@ -349,7 +349,11 @@ class PropertyRepository:
         return await self.prisma_client.rental.find_first(
             where={"id": rental_id},
             include={
-                "property": True,
+                "property": {
+                    "include": {
+                        "tenant_property": True,
+                    }
+                },
                 "user": True,
                 "payment": True,
             },

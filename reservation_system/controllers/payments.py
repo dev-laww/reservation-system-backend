@@ -1,4 +1,5 @@
 from ..repositories import PaymentRepository, NotificationRepository
+from ..controllers import PropertiesController
 
 from ..utils.response import Response
 from ..schemas.payments import Payments
@@ -8,6 +9,7 @@ class PaymentsController:
     def __init__(self):
         self.__repo = PaymentRepository()
         self.__notification_repo = NotificationRepository()
+        self.__prop_controller = PropertiesController()
 
     async def get_all_payments(self):
         payments = await self.__repo.get_all()
@@ -39,6 +41,9 @@ class PaymentsController:
             message=f"Payment for {payment.rental.property.name} was marked as paid.",
             user_id=payment.rental.user_id,
             created_by="SYSTEM"
+        )
+        await self.__prop_controller.accept_rental(
+            rental_id=payment.rental_id,
         )
         return Response.ok(message="Successfully marked payment as paid.")
 
